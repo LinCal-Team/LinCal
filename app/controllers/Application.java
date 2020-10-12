@@ -22,11 +22,11 @@ public class Application extends Controller {
         usuari1 = new User("BaboRulez", "babo@gmail.com", "Babo", "8480");
         usuari1.save();
 
-        //Calendar calendari1 = new Calendar(usuari1, "Grup d'Alpinistes subaquàtics", false);
+        LinCalendar calendari1 = new LinCalendar("Babo", "UPC", false);
         //calendari1.save();
 
         List<User> llistaUsers = User.findAll();
-        //List<Calendar> llistaCalendars = Calendar.findAll();
+        //List<LinCalendar> llistaCalendars = LinCalendar.findAll();
 
         String nomUsuari = llistaUsers.get(0).fullName;
         String nomUsuari2 = llistaUsers.get(1).fullName;
