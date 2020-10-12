@@ -14,7 +14,7 @@ public class CalTask extends Model{
 
     //Atributs
     @ManyToOne
-    public Calendar calendar;
+    public LinCalendar calendar;
 
     //TODO: Afegir atributs i constructor
 }

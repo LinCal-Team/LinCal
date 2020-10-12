@@ -14,7 +14,7 @@ public class CalEvent extends Model{
 
     //Atributs
     @ManyToOne
-    public Calendar calendar;
+    public LinCalendar calendar;
 
     //TODO: Afegir atributs i constructor
 }

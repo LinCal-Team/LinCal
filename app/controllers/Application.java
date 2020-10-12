@@ -23,15 +23,15 @@ public class Application extends Controller {
         usuari1.save();
 
         LinCalendar calendari1 = new LinCalendar("Babo", "UPC", false);
-        //calendari1.save();
+        calendari1.save();
 
         List<User> llistaUsers = User.findAll();
-        //List<LinCalendar> llistaCalendars = LinCalendar.findAll();
+        List<LinCalendar> llistaCalendars = LinCalendar.findAll();
 
         String nomUsuari = llistaUsers.get(0).fullName;
         String nomUsuari2 = llistaUsers.get(1).fullName;
-        //String nomCalendari1 = llistaCalendars.get(0).calName;
+        String nomCalendari1 = llistaCalendars.get(0).calName;
 
-        render(nomUsuari, nomUsuari2);
+        render(nomUsuari, nomUsuari2, nomCalendari1);
     }
 }
