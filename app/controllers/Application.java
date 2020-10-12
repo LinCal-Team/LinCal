@@ -16,15 +16,22 @@ public class Application extends Controller {
 
     public static void inicialitzarBaseDades(){
 
-        User usuari1 = new User("Ixion", "blueixion@gmail.com", "Joaquim");
+        User usuari1 = new User("Ixion", "blueixion@gmail.com", "Joaquim", "blue");
         usuari1.save();
 
-        usuari1 = new User("BaboRulez", "babo@gmail.com", "Babo");
+        usuari1 = new User("BaboRulez", "babo@gmail.com", "Babo", "8480");
         usuari1.save();
+
+        //Calendar calendari1 = new Calendar(usuari1, "Grup d'Alpinistes subaquàtics", false);
+        //calendari1.save();
 
         List<User> llistaUsers = User.findAll();
+        //List<Calendar> llistaCalendars = Calendar.findAll();
+
         String nomUsuari = llistaUsers.get(0).fullName;
         String nomUsuari2 = llistaUsers.get(1).fullName;
+        //String nomCalendari1 = llistaCalendars.get(0).calName;
+
         render(nomUsuari, nomUsuari2);
     }
 }
