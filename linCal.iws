@@ -23,6 +23,7 @@
       <change beforePath="$PROJECT_DIR$/app/controllers/Application.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/Application.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/models/CalEvent.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/CalEvent.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/models/CalTask.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/CalTask.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/views/Application/inicialitzarBaseDades.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/views/Application/inicialitzarBaseDades.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/linCal.iws" beforeDir="false" afterPath="$PROJECT_DIR$/linCal.iws" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
