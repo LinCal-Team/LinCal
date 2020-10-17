@@ -4,6 +4,7 @@ import play.*;
 import play.mvc.*;
 import java.util.*;
 import models.*;
+import play.data.validation.*;
 
 public class Application extends Controller {
 
@@ -13,6 +14,37 @@ public class Application extends Controller {
 
     // Per executar servei des del navegador
     // localhost:9000/Application/inicialitzarBaseDades
+
+    public static void LogIn(@Required String username,@Required String password){
+         if (validation.hasErrors())
+         {
+             flash.error("Falten camps per omplir.");
+             index();
+         }
+
+        User u = User.find("byUsername",username).first();
+
+        if (u==null)
+        {
+            flash.error("Usuari inexistent");
+            index();
+        }
+        else
+        {
+            if (u.password.equals(password))
+            {
+                String userN=u.userName;
+                render(userN);
+            }
+            else
+            {
+                flash.error("Contrassenya incorrecta.");
+                index();
+            }
+        }
+
+    }
+
 
     public static void inicialitzarBaseDades(){
 
