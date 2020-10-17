@@ -11,23 +11,30 @@ import java.util.Date;
 public class CalEvent extends Model{
 
     // Constructor
-    public CalEvent(String eventName, String eventDescription, String starteventDate, String finishedeventDate)
+    public CalEvent(LinCalendar calendar, String eventName, String eventDescription, String starteventDate,
+                    String finishedeventDate, String addressPhysical, String addressOnline)
     {
-        this.eventName = eventName;
-        this.eventDescription = eventDescription;
-        this.starteventDate = starteventDate;
-        this.finishedeventDate= finishedeventDate;
+        this.name = eventName;
+        this.description = eventDescription;
+        this.startDate = starteventDate;
+        this.endDate= finishedeventDate;
+        this.calendar = calendar;
+        this.addressOnline = addressOnline;
+        this.addressPhysical = addressPhysical;
     }
 
     // Atributs
-    public String eventName;
-    public String eventDescription;
-    public String starteventDate;
-    public String finishedeventDate;
+    public String name;
+    public String description;
+    public String startDate;
+    public String endDate;
+    public String addressPhysical;
+    public String addressOnline;
+
 
     //Atributs
-    //@ManyToOne
-    //public LinCalendar calendar;
+    @ManyToOne
+    public LinCalendar calendar;
 
     //TODO: Afegir atributs i constructor
 }

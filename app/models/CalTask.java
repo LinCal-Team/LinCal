@@ -11,23 +11,24 @@ import java.util.Date;
 public class CalTask extends Model{
 
     // Constructor
-    public CalTask(String taskName, String taskDescription, String taskDate, boolean taskfinished)
+    public CalTask(LinCalendar calendar, String taskName, String taskDescription, String taskDate, boolean taskfinished)
     {
-        this.taskName = taskName;
-        this.taskDescription = taskDescription;
-        this.taskDate = taskDate;
-        this.taskfinished = taskfinished;
+        this.name = taskName;
+        this.description = taskDescription;
+        this.date = taskDate;
+        this.completed = taskfinished;
+        this.calendar = calendar;
     }
 
     // Atributs
-    public String taskName;
-    public String taskDescription;
-    public String taskDate;
-    public boolean taskfinished;
+    public String name;
+    public String description;
+    public String date;
+    public boolean completed;
 
     //Atributs
-    //@ManyToOne
-    //public LinCalendar calendar;
+    @ManyToOne
+    public LinCalendar calendar;
 
     //TODO: Afegir atributs i constructor
 }
