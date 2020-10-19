@@ -12,13 +12,13 @@ import java.util.Date;
 public class Subscription extends Model{
 
     // Atributs
-    public Boolean isOwner;
+    //public Boolean isOwner;
     public Boolean isEditor;
 
     // Constructor
-    public Subscription (User user, LinCalendar cal, Boolean isOwner, Boolean isEditor)
+    public Subscription (User user, LinCalendar cal, Boolean isEditor)
     {
-        this.isOwner = isOwner;
+        //this.isOwner = isOwner;
         this.isEditor = isEditor;
         this.calendar = cal;
         this.user = user;

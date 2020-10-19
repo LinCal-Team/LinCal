@@ -21,7 +21,8 @@
   <component name="ChangeListManager">
     <list default="true" id="cc831433-5d6d-41d9-9b9e-1a06178cdcea" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/app/controllers/Application.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/Application.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/models/LinCalendar.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/LinCalendar.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/models/Subscription.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/Subscription.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/models/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/User.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/linCal.iws" beforeDir="false" afterPath="$PROJECT_DIR$/linCal.iws" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
