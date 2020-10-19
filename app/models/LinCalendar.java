@@ -11,7 +11,7 @@ import javax.persistence.*;
 public class LinCalendar extends Model{
 
     //Constructor
-    public LinCalendar(String owner, String calName, boolean isPublic){
+    public LinCalendar(User owner, String calName, boolean isPublic){
         this.owner = owner;
         this.calName = calName;
         this.isPublic = isPublic;
@@ -27,7 +27,7 @@ public class LinCalendar extends Model{
     public String calName;
     public boolean isPublic;
     public Date createdAt;
-    public String owner;
+    //public String owner;
     public String publicLink;
 
     // Relacio amb la llista de subscriptors
@@ -40,6 +40,9 @@ public class LinCalendar extends Model{
 
     @OneToMany (mappedBy="calendar", cascade=CascadeType.ALL)
     public List<CalTask> tasks;
+
+    @ManyToOne
+    public User owner;
 
     //TODO: Afegir altres atributs rellevants
 

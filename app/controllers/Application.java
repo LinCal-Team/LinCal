@@ -60,7 +60,7 @@ public class Application extends Controller {
 
         // Accio Crear Calendari
         // -------------------------------------------
-        LinCalendar calendari1 = new LinCalendar(usuari1.fullName, "UPC", false);
+        LinCalendar calendari1 = new LinCalendar(usuari1, "UPC", false);
         calendari1.save();
 
         Subscription subscription = new Subscription(usuari1, calendari1, true, true);
