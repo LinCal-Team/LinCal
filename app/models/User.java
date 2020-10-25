@@ -20,6 +20,7 @@ public class User extends Model {
         this.email = email;
         this.password = password;
         this.subscriptions = new ArrayList<Subscription>();
+        this.ownedCalendars = new ArrayList<LinCalendar>();
     }
 
     // Atributs
@@ -31,4 +32,9 @@ public class User extends Model {
     //Relacions
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     public List<Subscription> subscriptions;
+
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
+    public List<LinCalendar> ownedCalendars;
+
+
 }

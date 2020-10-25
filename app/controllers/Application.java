@@ -61,13 +61,20 @@ public class Application extends Controller {
 
         // Accio Crear Calendari
         // -------------------------------------------
-        LinCalendar calendari1 = new LinCalendar(usuari1.fullName, "UPC", false);
+        LinCalendar calendari1 = new LinCalendar(usuari1, "UPC", false);
         calendari1.save();
-
-        Subscription subscription = new Subscription(usuari1, calendari1, true, true);
-        subscription.save();
-        usuari1.subscriptions.add(subscription);
+        usuari1.ownedCalendars.add(calendari1);
         usuari1.save();
+        // -------------------------------------------
+
+
+        // Accio afegir subscriptor
+        // -------------------------------------------
+        User user = User.find("byUserName", "Ixion").first();
+        Subscription subscription = new Subscription(user, calendari1, true);
+        subscription.save();
+        user.subscriptions.add(subscription);
+        user.save();
         calendari1.subscriptions.add(subscription);
         calendari1.save();
         // -------------------------------------------
@@ -91,8 +98,7 @@ public class Application extends Controller {
         List<CalEvent> llistaEvents = CalEvent.findAll();
         List<CalTask> llistaTasks = CalTask.findAll();
 
-
-
+        
         String nomUsuari = llistaUsers.get(0).fullName;
         String nomUsuari2 = llistaUsers.get(1).fullName;
         String nomCalendari1 = llistaCalendars.get(0).calName;
