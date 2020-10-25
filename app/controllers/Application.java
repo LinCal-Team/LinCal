@@ -28,6 +28,7 @@ public class Application extends Controller {
         {
             flash.error("Usuari inexistent");
             index();
+            String bruh;
         }
         else
         {
