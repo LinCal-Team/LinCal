@@ -20,10 +20,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="cc831433-5d6d-41d9-9b9e-1a06178cdcea" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/app/views/Application/LogIn.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/controllers/Application.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/Application.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/views/Application/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/views/Application/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/conf/routes" beforeDir="false" afterPath="$PROJECT_DIR$/conf/routes" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/linCal.iml" beforeDir="false" afterPath="$PROJECT_DIR$/linCal.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/linCal.ipr" beforeDir="false" afterPath="$PROJECT_DIR$/linCal.ipr" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/linCal.iws" beforeDir="false" afterPath="$PROJECT_DIR$/linCal.iws" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -50,7 +49,49 @@
   <component name="PropertiesComponent">
     <property name="DefaultHtmlFileTemplate" value="HTML File" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/linCal.ipr" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../modules/testrunner/lib/play-testrunner.jar" />
+    <property name="project.structure.last.edited" value="Modules" />
+    <property name="project.structure.proportion" value="0.15" />
+    <property name="project.structure.side.proportion" value="0.2" />
+    <property name="settings.editor.selected.configurable" value="AndroidSdkUpdater" />
+  </component>
+  <component name="RunManager" selected="Application.LinCal">
+    <configuration name="LinCal" type="Application" factoryName="Application">
+      <option name="ALTERNATIVE_JRE_PATH" value="1.8" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
+      <option name="MAIN_CLASS_NAME" value="play.server.Server" />
+      <module name="linCal" />
+      <option name="VM_PARAMETERS" value="-Dapplication.path=&quot;.&quot; -Dplay.id=test" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="Application" factoryName="Application">
+      <option name="ALTERNATIVE_JRE_PATH" value="1.8" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
+      <option name="MAIN_CLASS_NAME" value="play.server.Server" />
+      <option name="VM_PARAMETERS" value="-Dapplication.path=&quot;.&quot; -Dplay.id=test" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="All in linCal" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="linCal" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="TEST_OBJECT" value="package" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="Application.LinCal" />
+      <item itemvalue="JUnit.All in linCal" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="JUnit.All in linCal" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -76,6 +117,46 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="WindowStateProjectService">
+    <state x="163" y="0" key="#Project_Structure" timestamp="1603646783755">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state x="163" y="0" key="#Project_Structure/0.0.1366.728@0.0.1366.728" timestamp="1603646783755" />
+    <state x="137" y="18" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1603646926046">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state x="137" y="18" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1366.728@0.0.1366.728" timestamp="1603646926046" />
+    <state x="412" y="153" key="#com.intellij.ide.util.TreeClassChooserDialog" timestamp="1603646108471">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state x="412" y="153" key="#com.intellij.ide.util.TreeClassChooserDialog/0.0.1366.728@0.0.1366.728" timestamp="1603646108471" />
+    <state x="133" y="57" width="720" height="579" key="#com.intellij.openapi.roots.ui.configuration.libraryEditor.LibraryEditorDialog" timestamp="1603646780989">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state x="133" y="57" width="720" height="579" key="#com.intellij.openapi.roots.ui.configuration.libraryEditor.LibraryEditorDialog/0.0.1366.728@0.0.1366.728" timestamp="1603646780989" />
+    <state x="463" y="105" key="FileChooserDialogImpl" timestamp="1603646521291">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state x="463" y="105" key="FileChooserDialogImpl/0.0.1366.728@0.0.1366.728" timestamp="1603646521291" />
+    <state width="1323" height="570" key="GridCell.Tab.0.bottom" timestamp="1603646929950">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state width="1323" height="570" key="GridCell.Tab.0.bottom/0.0.1366.728@0.0.1366.728" timestamp="1603646929950" />
+    <state width="1323" height="570" key="GridCell.Tab.0.center" timestamp="1603646929949">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state width="1323" height="570" key="GridCell.Tab.0.center/0.0.1366.728@0.0.1366.728" timestamp="1603646929949" />
+    <state width="1323" height="570" key="GridCell.Tab.0.left" timestamp="1603646929949">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state width="1323" height="570" key="GridCell.Tab.0.left/0.0.1366.728@0.0.1366.728" timestamp="1603646929949" />
+    <state width="1323" height="570" key="GridCell.Tab.0.right" timestamp="1603646929949">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state width="1323" height="570" key="GridCell.Tab.0.right/0.0.1366.728@0.0.1366.728" timestamp="1603646929949" />
+    <state x="163" y="0" key="SettingsEditor" timestamp="1603645420768">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state x="163" y="0" key="SettingsEditor/0.0.1366.728@0.0.1366.728" timestamp="1603645420768" />
     <state x="859" y="347" width="840" height="1034" key="search.everywhere.popup" timestamp="1602454146914">
       <screen x="0" y="34" width="2560" height="1406" />
     </state>
