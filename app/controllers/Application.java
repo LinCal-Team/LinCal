@@ -79,7 +79,6 @@ public class Application extends Controller {
         calendari1.save();
         // -------------------------------------------
 
-
         // Accio Crear tasques i esdeveniments
         CalTask tasca1 = new CalTask(calendari1, "Mart 2024", "Elon Musk envia l'home al planteta roig", "31/12/2024", false);
         tasca1.save();
