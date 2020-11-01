@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<h3>Esteu segur de que voleu esborrar el vostre compte, ${username}? Introdueix la contrassenya per confirmar l'acció</h3>
+
+<form action="@{Application.DeleteUser(username, password)}">
+    <label for="username">Nom d'usuari:</label><br>
+    <input type="text" id="username" name="username"><br>
+    <label for="password">Contrassenya:</label><br>
+    <input type="text" id="password" name="password"><br><br>
+    <input type="submit" value="Esborrar el compte">
+</form>
+
+#{if flash.error}
+<p style="color:#c00">
+    ${flash.error}
+</p>
+#{/if}
+
+
+</body>
+</html>

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<form action="@{Application.CreateCalendar(calName, description)}">
+    <label for="calName">Nom del calendari:</label><br>
+    <input type="text" id="calName" name="calName"><br>
+    <label for="description">Descripció:</label><br>
+    <input type="text" id="description" name="description"><br>
+    <input type="submit" value="Crear calendari">
+</form>
+
+
+</body>
+</html>

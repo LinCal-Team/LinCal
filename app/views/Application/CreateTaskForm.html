@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<form action="@{Application.CreateTask(taskName, description, taskDate, calName)}">
+    <label for="taskName">Nom de la tasca:</label><br>
+    <input type="text" id="taskName" name="taskName"><br>
+    <label for="description">Descripció:</label><br>
+    <input type="text" id="description" name="description"><br>
+    <label for="taskDate">Data:</label><br>
+    <input type="text" id="taskDate" name="taskDate"><br>
+    <label for="calName">Calendari:</label><br>
+    <input type="text" id="calName" name="calName"><br>
+    <input type="submit" value="Crear tasca">
+</form>
+
+</body>
+</html>

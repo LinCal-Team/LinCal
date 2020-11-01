@@ -11,9 +11,10 @@ import javax.persistence.*;
 public class LinCalendar extends Model{
 
     //Constructor
-    public LinCalendar(User owner, String calName, boolean isPublic){
+    public LinCalendar(User owner, String calName, String description, boolean isPublic){
         this.owner = owner;
         this.calName = calName;
+        this.description = description;
         this.isPublic = isPublic;
         this.createdAt = new Date();
         this.tasks = new ArrayList<CalTask>();
@@ -25,6 +26,7 @@ public class LinCalendar extends Model{
 
     //Atributs
     public String calName;
+    public String description;
     public boolean isPublic;
     public Date createdAt;
     //public String owner;

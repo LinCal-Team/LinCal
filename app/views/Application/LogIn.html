@@ -5,6 +5,30 @@
     <title>LinCal</title>
 </head>
 <body>
-<h1>Com en aquest club no hi ha res, benvingut al Super3, ${userN}</h1>
+<h3>benvingut a LinCal, ${userN}</h3>
+
+
+<button type="button" onclick="window.location.href='@{Application.DeleteUserForm()}';">
+    Esborra el compte
+</button>
+
+<button type="button" onclick="window.location.href='@{Application.CreateCalendarForm()}';">
+    Crear un calendari
+</button>
+
+<button type="button" onclick="window.location.href='@{Application.CreateTaskForm()}';">
+    Crea una tasca
+</button>
+
+<button type="button" onclick="window.location.href='@{Application.CreateEventForm()}';">
+    Crea una Esdeveniment
+</button>
+
+#{if flash.messageOK}
+<p>
+    ${flash.messageOK}
+</p>
+#{/if}
+
 </body>
 </html>

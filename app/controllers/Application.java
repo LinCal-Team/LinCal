@@ -28,13 +28,13 @@ public class Application extends Controller {
         {
             flash.error("Usuari inexistent");
             index();
-            String bruh;
         }
         else
         {
             if (u.password.equals(password))
             {
                 String userN=u.userName;
+                session.put("username", userN);
                 render(userN);
             }
             else
@@ -43,7 +43,311 @@ public class Application extends Controller {
                 index();
             }
         }
+    }
 
+    public static void SignUpForm()
+    {
+        render();
+    }
+
+    public static void SignUp(@Required String fullName, @Required String username, @Required String email, @Required String password)
+    {
+        if (validation.hasErrors())
+        {
+            flash.error("Falten camps per omplir.");
+            SignUpForm();
+        }
+
+        User u = User.find("byUsername",username).first();
+
+        if (u!=null)
+        {
+            flash.error("Aqest usuari ja existeix!");
+            SignUpForm();
+        }
+        else
+        {
+            u = User.find("byEmail", email).first();
+            if (u == null)
+            {
+                User newUser = new User(username, email, fullName, password);
+                newUser.save();
+                String userN = newUser.userName;
+                render(userN);
+                // TODO: Afegir vista
+            }
+            else
+            {
+                flash.error("Aquest correu electrònic ja s'ha utilitzat!");
+                SignUpForm();
+            }
+        }
+    }
+
+    public static void DeleteUserForm()
+    {
+        String username = session.get("username");
+        User u = User.find("byUsername", username).first();
+        if (u == null)
+        {
+            renderText("Error al DeleteUserForm: l'usuari no existeix!, username =" + username);
+        }
+        else
+        {
+            render(username);
+        }
+    }
+
+    public static void DeleteUser(@Required String username, @Required String password)
+    {
+        if (validation.hasErrors())
+        {
+            flash.error("Falten camps per omplir.");
+            render("Application/DeleteUserForm.html", username);
+        }
+
+        User u = User.find("byUsername",username).first();
+
+        if (u==null)
+        {
+            flash.error("Error al DeleteUser: L'usuari no existeix!");
+            index();
+        }
+        else
+        {
+            if (!u.password.equals(password))
+            {
+                flash.error("Contrassenya incorrecta!");
+                render("Application/DeleteUserForm.html", username);
+            }
+            else
+            {
+                LinCalendar cal;
+                for (Subscription subscription : u.subscriptions)
+                {
+                    cal = subscription.calendar;
+                    cal.subscriptions.remove(subscription);
+                }
+                for (LinCalendar calendar : u.ownedCalendars)
+                {
+                    for (Subscription subscription : calendar.subscriptions)
+                    {
+                        subscription.user.subscriptions.remove(subscription);
+                    }
+                }
+                u.delete();
+                renderText("Usuari esborrat!");
+            }
+        }
+    }
+
+    public static void CreateCalendarForm()
+    {
+        String username = session.get("username");
+        render();
+    }
+
+    public static void CreateCalendar(String calName, String description)
+    {
+        // TODO: comprovar que l'usuari existeix
+        User owner = User.find("byUsername", session.get("username")).first();
+        LinCalendar calendar = new LinCalendar(owner, calName, description,false);
+        calendar.save();
+        owner.ownedCalendars.add(calendar);
+        owner.save();
+        flash.put("messageOK", "Calendari creat correctament.");
+        String userN = session.get("username");
+        render("Application/LogIn.html", userN);
+    }
+
+
+    // Encara no està accessible des de l'aplicació web
+    public static void DeleteCalendar(@Required String calName)
+    {
+        /*if (validation.hasErrors())
+        {
+            flash.error("Falten camps per omplir.");
+            render("Application/DeleteUserForm.html", username);
+        }*/
+        String username = session.get("username");
+        User owner = User.find("byUsername", username).first();
+        LinCalendar calendar;
+
+        // TODO: no iterar quan ja trobem el calendari
+        for (LinCalendar cal : owner.ownedCalendars) {
+            if (cal.calName.equals(calName)) {
+                calendar = cal;
+                for (Subscription subscription : calendar.subscriptions) {
+                    subscription.user.subscriptions.remove(subscription);
+                }
+                calendar.delete();
+            }
+        }
+    }
+
+    public static void CreateTaskForm()
+    {
+        render();
+    }
+
+    public static void CreateTask(String taskName, String description, String taskDate, String calName)
+    {
+        User owner = User.find("byUsername", session.get("username")).first();
+
+        LinCalendar calendar;
+        // TODO: no iterar quan ja trobem el calendari
+        // TODO: si no es trboa el calendari, misstage d'error
+        for (LinCalendar cal : owner.ownedCalendars) {
+            if (cal.calName.equals(calName)) {
+                calendar = cal;
+                CalTask task = new CalTask(calendar, taskName, description, taskDate, false);
+                task.save();
+                calendar.tasks.add(task);
+                calendar.save();
+                flash.put("messageOK", "Tasca creada correctament.");
+                String userN = session.get("username");
+                render("Application/LogIn.html", userN);
+
+            }
+        }
+    }
+    public static void CreateEventForm()
+    {
+        render();
+    }
+
+    public static void CreateEvent(String name, String description, String startDate, String endDate, String calName, String addressOnline, String addressPhysical)
+    {
+        User owner = User.find("byUsername", session.get("username")).first();
+
+        LinCalendar calendar;
+        // TODO: no iterar quan ja trobem el calendari
+        // TODO: si no es trboa el calendari, misstage d'error
+        for (LinCalendar cal : owner.ownedCalendars) {
+            if (cal.calName.equals(calName)) {
+                calendar = cal;
+                CalEvent event= new CalEvent(calendar, name, description, startDate, endDate, addressPhysical, addressOnline );
+                event.save();
+                calendar.events.add(event);
+                calendar.save();
+                flash.put("messageOK", "Esdeveniment creat correctament.");
+                String userN = session.get("username");
+                render("Application/LogIn.html", userN);
+
+            }
+        }
+    }
+
+    // Encara no està accessible des de l'aplicació web
+    public static void DeleteEvent(String eventName, String calName)
+    {
+        String username = session.get("username");
+        User owner = User.find("byUsername", username).first();
+        LinCalendar calendar;
+
+        // TODO: no iterar quan ja trobem el calendari
+        for (LinCalendar cal : owner.ownedCalendars) {
+            if (cal.calName.equals(calName)) {
+                calendar = cal;
+                for (CalEvent event : cal.events) {
+                    if (event.name.equals((eventName))) {
+                        event.delete();
+                    }
+                }
+            }
+        }
+
+    }
+
+    // Encara no està accessible des de l'aplicació web
+    public static void DeleteTask(String taskName, String calName)
+    {
+        String username = session.get("username");
+        User owner = User.find("byUsername", username).first();
+        LinCalendar calendar;
+
+        // TODO: no iterar quan ja trobem el calendari
+        for (LinCalendar cal : owner.ownedCalendars) {
+            if (cal.calName.equals(calName)) {
+                calendar = cal;
+                for (CalTask task : cal.tasks) {
+                    if (task.name.equals((taskName))) {
+                        task.delete();
+                    }
+                }
+            }
+        }
+    }
+
+    // Encara no està accessible des de l'aplicació web
+    public static void EditEvent(String calName, String oldEventName, String newEventName, String description, String startDate,
+                                 String endDate, String addressOnline, String addressPhysical)
+    {
+        String username = session.get("username");
+        User owner = User.find("byUsername", username).first();
+        LinCalendar calendar;
+
+        // TODO: no iterar quan ja trobem el calendari
+        for (LinCalendar cal : owner.ownedCalendars) {
+            if (cal.calName.equals(calName)) {
+                calendar = cal;
+                for (CalEvent event : cal.events) {
+                    if (event.name.equals((oldEventName))) {
+                        event.name = newEventName;
+                        event.addressOnline = addressOnline;
+                        event.addressPhysical = addressPhysical;
+                        event.description = description;
+                        event.startDate = startDate;
+                        event.endDate = endDate;
+                        event.save();
+                    }
+                }
+            }
+        }
+    }
+
+    // Encara no està accessible des de l'aplicació web
+    public static void EditTask(String calName, String oldTaskName, String newTaskName, String description, String date)
+    {
+        String username = session.get("username");
+        User owner = User.find("byUsername", username).first();
+        LinCalendar calendar;
+
+        // TODO: no iterar quan ja trobem el calendari
+        for (LinCalendar cal : owner.ownedCalendars) {
+            if (cal.calName.equals(calName)) {
+                calendar = cal;
+                for (CalTask task : cal.tasks) {
+                    if (task.name.equals((oldTaskName))) {
+                        task.name = newTaskName;
+                        task.description = description;
+                        task.date = date;
+                        task.save();
+                    }
+                }
+            }
+        }
+    }
+
+    // Encara no està accessible des de l'aplicació web
+    public static void markTaskDone(String calName, String taskName)
+    {
+        String username = session.get("username");
+        User owner = User.find("byUsername", username).first();
+        LinCalendar calendar;
+
+        // TODO: no iterar quan ja trobem el calendari
+        for (LinCalendar cal : owner.ownedCalendars) {
+            if (cal.calName.equals(calName)) {
+                calendar = cal;
+                for (CalTask task : cal.tasks) {
+                    if (task.name.equals((taskName))) {
+                        task.completed = true;
+                        task.save();
+                    }
+                }
+            }
+        }
     }
 
 
@@ -61,7 +365,7 @@ public class Application extends Controller {
 
         // Accio Crear Calendari
         // -------------------------------------------
-        LinCalendar calendari1 = new LinCalendar(usuari1, "UPC", false);
+        LinCalendar calendari1 = new LinCalendar(usuari1, "UPC","Descripcio de prova", false);
         calendari1.save();
         usuari1.ownedCalendars.add(calendari1);
         usuari1.save();

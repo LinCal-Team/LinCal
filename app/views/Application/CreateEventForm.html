@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<form action="@{Application.CreateEvent(name, description, startDate, endDate, calName, addressOnline, addressPhysical)}">
+    <label for="name">Nom de l'esdeveniment:</label><br>
+    <input type="text" id="name" name="name"><br>
+    <label for="description">Descripció:</label><br>
+    <input type="text" id="description" name="description"><br>
+    <label for="startDate">Data d'inici:</label><br>
+    <input type="text" id="startDate" name="startDate"><br>
+    <label for="endDate">Data de finalització:</label><br>
+    <input type="text" id="endDate" name="endDate"><br>
+    <label for="calName">Calendari:</label><br>
+    <input type="text" id="calName" name="calName"><br>
+    <label for="addressOnline">adreça online:</label><br>
+    <input type="text" id="addressOnline" name="addressOnline"><br>
+    <label for="addressPhysical">adreça física:</label><br>
+    <input type="text" id="addressPhysical" name="addressPhysical"><br>
+    <input type="submit" value="Crear Esdeveniment">
+</form>
+
+
+</body>
+</html>

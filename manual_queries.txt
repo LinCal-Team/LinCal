@@ -1,0 +1,5 @@
+SELECT * FROM CALEVENT;
+SELECT * FROM CALtask;
+SELECT * FROM lincalendar;
+SELECT * FROM user;
+SELECT * FROM subscription;
