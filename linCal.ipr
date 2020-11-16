@@ -20,7 +20,7 @@
   <component name="libraryTable">
     <library name="play-testrunner">
       <CLASSES>
-        <root url="jar://$PROJECT_DIR$/../modules/testrunner/lib/play-testrunner.jar!/" />
+        <root url="jar://$PROJECT_DIR$/../play-1.5.3/modules/testrunner/lib/play-testrunner.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES />

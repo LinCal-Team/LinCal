@@ -24,6 +24,10 @@
     Crea una Esdeveniment
 </button>
 
+<button type="button" onclick="window.location.href='@{Application.Logout()}';">
+    Tanca Sessió
+</button>
+
 #{if flash.messageOK}
 <p>
     ${flash.messageOK}

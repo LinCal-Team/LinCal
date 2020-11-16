@@ -1,15 +1,70 @@
 package controllers;
 
+
 import play.*;
 import play.mvc.*;
 import java.util.*;
 import models.*;
 import play.data.validation.*;
+import play.mvc.results.RenderTemplate;
 
 public class Application extends Controller {
 
-    public static void index() {
-        render();
+    @Before
+    static void checkSession ()
+    {
+       User connectedUser = connectedUser();
+       if (connectedUser != null)
+       {
+           renderArgs.put("user", connectedUser);
+       }
+    }
+
+    static User connectedUser ()
+    {
+        User connectedUser;
+        String username = session.get("username");
+        if (username == null)
+        {
+            return null;
+        }
+        else
+        {
+            connectedUser = renderArgs.get("user", User.class);
+            if (connectedUser == null)
+            {
+                connectedUser = User.find("byUsername", username).first();
+            }
+            return connectedUser;
+        }
+    }
+
+    public static boolean initUser (String username)
+    {
+        User user = User.find("byUsername", username).first();
+        if (user == null)
+        {
+            return false;
+        }
+        else
+        {
+            session.put("username", username);
+            renderArgs.put("user", user);
+            return true;
+        }
+    }
+
+    public static void index()
+    {
+        if (connectedUser() != null)
+        {
+            String userN = connectedUser().userName;
+            renderTemplate("Application/LogIn.html", userN);
+        }
+        else
+        {
+            render();
+        }
     }
 
     // Per executar servei des del navegador
@@ -34,8 +89,11 @@ public class Application extends Controller {
             if (u.password.equals(password))
             {
                 String userN=u.userName;
-                session.put("username", userN);
-                render(userN);
+                boolean initOk = initUser(userN);
+                if (initOk)
+                {
+                    render(userN);
+                }
             }
             else
             {
@@ -43,6 +101,12 @@ public class Application extends Controller {
                 index();
             }
         }
+    }
+
+    public static void Logout ()
+    {
+        session.remove("username");
+        renderTemplate("Application/index.html");
     }
 
     public static void SignUpForm()
@@ -233,7 +297,6 @@ public class Application extends Controller {
                 flash.put("messageOK", "Esdeveniment creat correctament.");
                 String userN = session.get("username");
                 render("Application/LogIn.html", userN);
-
             }
         }
     }
@@ -256,7 +319,6 @@ public class Application extends Controller {
                 }
             }
         }
-
     }
 
     // Encara no està accessible des de l'aplicació web
