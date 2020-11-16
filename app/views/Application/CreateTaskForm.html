@@ -1,11 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
+<!--#{extends 'main.html' /}-->
+#{set title:'Inici' /}
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
 <body>
-
+<div class="box">
 <form action="@{Application.CreateTask(taskName, description, taskDate, calName)}">
     <label for="taskName">Nom de la tasca:</label><br>
     <input type="text" id="taskName" name="taskName"><br>
@@ -17,6 +17,6 @@
     <input type="text" id="calName" name="calName"><br>
     <input type="submit" value="Crear tasca">
 </form>
-
+</div>
 </body>
-</html>
+<!--{welcome /}-->

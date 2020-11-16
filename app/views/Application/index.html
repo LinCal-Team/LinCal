@@ -8,21 +8,26 @@
     Crear base de dades
 </button>
 
-#{if flash.error}
-<p style="color:#c00">
-    ${flash.error}
-</p>
-#{/if}
+<div class="box">
 
 <form action="@{Application.LogIn(username, password)}">
     <label for="username">Nom d'usuari:</label><br>
-    <input type="text" id="username" name="username"><br>
+    <input type="text" id="username" name="username" placeholder="Nom d'usuari..."><br>
     <label for="password">Contrassenya:</label><br>
-    <input type="text" id="password" name="password"><br><br>
+    <input type="text" id="password" name="password" placeholder="********"><br><br>
+
+    #{if flash.error}
+    <p style="color:#c00">
+        ${flash.error}
+    </p>
+    #{/if}
+
     <input type="submit" value="Inicia sessió">
 </form>
 
 <button type="button" onclick="window.location.href='@{Application.SignUpForm()}';">
     Registra't
 </button>
+
+</div>
 <!--{welcome /}-->

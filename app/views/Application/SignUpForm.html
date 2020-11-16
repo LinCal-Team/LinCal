@@ -1,11 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
+<!--#{extends 'main.html' /}-->
+#{set title:'Inici' /}
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
 <body>
-
+<div class="box">
 <form action="@{Application.SignUp(fullName, username, email, password)}">
     <label for="fullName">Nom complet:</label><br>
     <input type="text" id="fullName" name="fullName"><br>
@@ -24,5 +24,6 @@
 </p>
 #{/if}
 
+</div>
 </body>
-</html>
+<!--{welcome /}-->
