@@ -28,11 +28,41 @@
     Tanca Sessió
 </button>
 
+
 #{if flash.messageOK}
 <p>
     ${flash.messageOK}
 </p>
 #{/if}
+
+
+#{if events != null}
+#{if events.size() > 0}
+#{table events, as:'e'}
+#{column 'Nom Esdeveniment'}
+${e.name}
+#{/column}
+#{column 'Data d\'Inici'}
+${e.startDate}
+#{/column}
+#{column 'Data de finalització'}
+${e.endDate}
+#{/column}
+
+#{column 'Data de finalització'}
+<button type="button">
+    Esborra
+</button>
+#{/column}
+
+#{/table}
+
+
+#{/if}
+#{/if}
+
+
+
 
 </body>
 </html>

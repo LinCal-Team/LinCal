@@ -11,12 +11,30 @@ import play.mvc.results.RenderTemplate;
 public class Application extends Controller {
 
     @Before
-    static void checkSession ()
+    static void updateTemplateArgs ()
     {
        User connectedUser = connectedUser();
        if (connectedUser != null)
        {
            renderArgs.put("user", connectedUser);
+           List<CalEvent> events = new ArrayList<>();
+
+           for (LinCalendar cal : connectedUser.ownedCalendars)
+           {
+               for (CalEvent event : cal.events)
+               {
+                   events.add(event);
+               }
+           }
+           for (Subscription s : connectedUser.subscriptions)
+           {
+               LinCalendar cal = s.calendar;
+               for (CalEvent event : cal.events)
+               {
+                   events.add(event);
+               }
+           }
+           renderArgs.put("events", events);
        }
     }
 
@@ -219,6 +237,7 @@ public class Application extends Controller {
         calendar.save();
         owner.ownedCalendars.add(calendar);
         owner.save();
+
         flash.put("messageOK", "Calendari creat correctament.");
         String userN = session.get("username");
         render("Application/LogIn.html", userN);
@@ -294,6 +313,8 @@ public class Application extends Controller {
                 event.save();
                 calendar.events.add(event);
                 calendar.save();
+                updateTemplateArgs();
+
                 flash.put("messageOK", "Esdeveniment creat correctament.");
                 String userN = session.get("username");
                 render("Application/LogIn.html", userN);
