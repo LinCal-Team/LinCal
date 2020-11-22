@@ -1,10 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
+<!--#{extends 'main.html' /}-->
+#{set title:'Inici' /}
 <head>
     <meta charset="UTF-8">
     <title>LinCal</title>
 </head>
 <body>
+
+<div class="box">
 <h3>benvingut a LinCal, ${userN}</h3>
 
 
@@ -29,12 +31,14 @@
 </button>
 
 
+
 #{if flash.messageOK}
 <p>
     ${flash.messageOK}
 </p>
 #{/if}
 
+</div>
 
 #{if events != null}
 #{if events.size() > 0}
@@ -62,7 +66,5 @@ ${e.endDate}
 #{/if}
 
 
-
-
 </body>
-</html>
+<!--{welcome /}-->

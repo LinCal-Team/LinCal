@@ -1,5 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
+<!--#{extends 'main.html' /}-->
+#{set title:'Inici' /}
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
@@ -7,7 +7,7 @@
 <body>
 
 <h3>Esteu segur de que voleu esborrar el vostre compte, ${username}? Introdueix la contrassenya per confirmar l'acció</h3>
-
+<div class="box">
 <form action="@{Application.DeleteUser(username, password)}">
     <label for="username">Nom d'usuari:</label><br>
     <input type="text" id="username" name="username"><br>
@@ -22,6 +22,7 @@
 </p>
 #{/if}
 
+</div>
 
 </body>
-</html>
+<!--{welcome /}-->
