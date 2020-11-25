@@ -35,6 +35,8 @@ public class Application extends Controller {
                }
            }
            renderArgs.put("events", events);
+
+
        }
     }
 
@@ -55,6 +57,53 @@ public class Application extends Controller {
             }
             return connectedUser;
         }
+    }
+
+    @Before //(only= {"index","LogIn","SingUp"})
+    public static void setCalendarItems()
+    {
+        Date today = new Date();
+        String[] month =
+                {"Gener",
+                        "Febrer",
+                        "Març",
+                        "Abril",
+                        "Maig",
+                        "Juny",
+                        "Juliol",
+                        "Agost",
+                        "Setembre",
+                        "Octubre",
+                        "Novembre",
+                        "Decembre"};
+        String[] week =
+                {"Dilluns",
+                        "Dimarts",
+                        "Dimecres",
+                        "Dijous",
+                        "Divendres",
+                        "Dissabte",
+                        "Diumenge"
+                };
+
+        String Monday;
+        if((today.getDate()-today.getDay()+1)>0)
+            Monday = (today.getDate()-today.getDay()+1) + " " + month[today.getMonth()];
+        else
+            Monday = (new Date(today.getYear(), today.getMonth() - 1,0).getDate()
+                    + today.getDate()-today.getDay()+1) + " " + month[today.getMonth()];
+
+        String Sunday;
+        if((today.getDate()+7-today.getDay())>new Date(today.getYear(), today.getMonth(),0).getDate())
+            Sunday = (today.getDate()+7-today.getDay() - new Date(today.getYear(), today.getMonth(),0).getDate())
+                    + " " + month[today.getMonth()+1];
+        else
+            Sunday = (today.getDate()+7-today.getDay()) + " " + month[today.getMonth()];
+
+        renderArgs.put("Month", Monday + " - " + Sunday);
+        renderArgs.put("Today", today.toLocaleString());
+        renderArgs.put("Week", week[today.getDay()-1]);
+
     }
 
     public static boolean initUser (String username)
@@ -119,6 +168,8 @@ public class Application extends Controller {
                 index();
             }
         }
+
+
     }
 
     public static void Logout ()
@@ -132,15 +183,16 @@ public class Application extends Controller {
         render();
     }
 
-    public static void SignUp(@Required String fullName, @Required String username, @Required String email, @Required String password)
+    public static void SignUp(@Valid User user)
     {
         if (validation.hasErrors())
         {
-            flash.error("Falten camps per omplir.");
+            params.flash();
+            Validation.keep();
             SignUpForm();
         }
 
-        User u = User.find("byUsername",username).first();
+        User u = User.find("byUsername",user.userName).first();
 
         if (u!=null)
         {
@@ -149,10 +201,10 @@ public class Application extends Controller {
         }
         else
         {
-            u = User.find("byEmail", email).first();
+            u = User.find("byEmail", user.email).first();
             if (u == null)
             {
-                User newUser = new User(username, email, fullName, password);
+                User newUser = user;
                 newUser.save();
                 String userN = newUser.userName;
                 render(userN);

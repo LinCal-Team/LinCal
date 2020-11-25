@@ -6,15 +6,19 @@
 </head>
 <body>
 <div class="box">
-<form action="@{Application.SignUp(fullName, username, email, password)}">
+<form action="@{Application.SignUp()}">
     <label for="fullName">Nom complet:</label><br>
-    <input type="text" id="fullName" name="fullName"><br>
+    <input type="text" id="fullName" name="user.fullName" value="${flash['user.fullName']}"><br>
+    <span class="error">#{error 'user.fullName'/}</span><br>
     <label for="email">Correu electrònic:</label><br>
-    <input type="text" id="email" name="email"><br>
+    <input type="text" id="email" name="user.email" value="${flash['user.email']}"><br>
+    <span class="error">#{error 'user.email'/}</span><br>
     <label for="username">Nom d'usuari:</label><br>
-    <input type="text" id="username" name="username"><br>
+    <input type="text" id="username" name="user.userName" value="${flash['user.userName']}"><br>
+    <span class="error">#{error 'user.userName'/}</span><br>
     <label for="password">Contrassenya:</label><br>
-    <input type="text" id="password" name="password"><br><br>
+    <input type="text" id="password" name="user.password" value="${flash['user.password']}"><br>
+    <span class="error">#{error 'user.password'/}</span><br>
     <input type="submit" value="Crear Usuari">
 </form>
 

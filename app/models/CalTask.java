@@ -1,5 +1,7 @@
 package models;
 
+import play.data.validation.MaxSize;
+import play.data.validation.Required;
 import play.db.jpa.Model;
 
 import javax.persistence.*;
@@ -21,14 +23,30 @@ public class CalTask extends Model{
     }
 
     // Atributs
+    @Required
+    @MaxSize(100)
     public String name;
+
+    @MaxSize(5000)
     public String description;
+
+    @Required
     public String date;
+
+    @Required
     public boolean completed;
 
     //Atributs
+    @Required
     @ManyToOne
     public LinCalendar calendar;
 
     //TODO: Afegir atributs i constructor
+
+    //Nom dels elements del CRUD
+    public String toString()
+    {
+        String s = calendar.owner.userName + "->" + calendar.calName + "->" + name;
+        return s;
+    }
 }

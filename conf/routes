@@ -16,3 +16,6 @@ GET     /public/                                staticDir:public
 
 GET     /Application/inicialitzarBaseDades       Application.inicialitzarBaseDades
 GET     /Application/LogIn                       Application.LogIn
+
+# Import CRUD routes
+*     /admin           module:crud

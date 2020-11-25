@@ -6,13 +6,27 @@
 </head>
 <body>
 
-<div class="box">
-<h3>benvingut a LinCal, ${userN}</h3>
 
-
-<button type="button" onclick="window.location.href='@{Application.DeleteUserForm()}';">
+<div class="grid-container header">
+    <div class="header-text">
+    <h3>benvingut a LinCal, ${userN}</h3>
+    </div>
+    <div class="header-button">
+    <button type="button" onclick="window.location.href='@{Application.Logout()}';">
+    Tanca Sessió
+    </button>
+    </div>
+    <div class="header-button">
+    <button type="button" onclick="window.location.href='@{Application.DeleteUserForm()}';">
     Esborra el compte
-</button>
+    </button>
+    </div>
+</div>
+
+<br><br><br><br>
+<div class="box">
+
+
 
 <button type="button" onclick="window.location.href='@{Application.CreateCalendarForm()}';">
     Crear un calendari
@@ -26,10 +40,8 @@
     Crea una Esdeveniment
 </button>
 
-<button type="button" onclick="window.location.href='@{Application.Logout()}';">
-    Tanca Sessió
-</button>
 
+</div>
 
 
 #{if flash.messageOK}
@@ -37,6 +49,42 @@
     ${flash.messageOK}
 </p>
 #{/if}
+
+</div>
+
+
+<div class="calendar-container">
+    <div class="calendar">
+    <div class="calendar-month">
+        <button> Setmana anterior</button>
+        <div class="calendar-week">
+        <h1>${Month}</h1>
+            <p>${Week}, ${Today}</p>
+        </div>
+        <button> Setmana posterior</button>
+
+    </div>
+
+    <div class="calendar-weekdays">
+        <div>Dilluns</div>
+        <div>Dimarts</div>
+        <div>Dimecres</div>
+        <div>Dijous</div>
+        <div>Divendres</div>
+        <div>Dissabte</div>
+        <div>Diumenge</div>
+    </div>
+    <div class="calendar-days">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+
+    </div>
+    </div>
 
 </div>
 
@@ -65,6 +113,6 @@ ${e.endDate}
 #{/if}
 #{/if}
 
-
+<script src="@{'/public/javascripts/calendar.js'}"></script>
 </body>
 <!--{welcome /}-->

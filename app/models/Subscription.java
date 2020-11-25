@@ -1,5 +1,7 @@
 package models;
 
+import play.data.validation.MaxSize;
+import play.data.validation.Required;
 import play.db.jpa.Model;
 
 import javax.persistence.*;
@@ -13,6 +15,7 @@ public class Subscription extends Model{
 
     // Atributs
     //public Boolean isOwner;
+    @Required
     public Boolean isEditor;
 
     // Constructor
@@ -25,9 +28,19 @@ public class Subscription extends Model{
     }
 
     // Relacions
+    @Required
     @ManyToOne
     public User user;
+
+    @Required
     @ManyToOne
     public LinCalendar calendar;
+
+    //Nom dels elements del CRUD
+    public String toString()
+    {
+        String s = user.userName + ">" + calendar.calName;
+        return s;
+    }
 
 }

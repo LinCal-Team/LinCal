@@ -1,5 +1,7 @@
 package models;
 
+import play.data.validation.MaxSize;
+import play.data.validation.Required;
 import play.db.jpa.Model;
 
 import java.util.ArrayList;
@@ -25,9 +27,18 @@ public class LinCalendar extends Model{
     }
 
     //Atributs
+
+    @Required
+    @MaxSize(30)
     public String calName;
+
+    @MaxSize(5000)
     public String description;
+
+    @Required
     public boolean isPublic;
+
+    @Required
     public Date createdAt;
     //public String owner;
     public String publicLink;
@@ -43,9 +54,17 @@ public class LinCalendar extends Model{
     @OneToMany (mappedBy="calendar", cascade=CascadeType.ALL)
     public List<CalTask> tasks;
 
+    @Required
     @ManyToOne
     public User owner;
 
     //TODO: Afegir altres atributs rellevants
+
+    //Nom dels elements del CRUD
+    public String toString()
+    {
+        String s = owner.userName + "->" + calName;
+        return s;
+    }
 
 }
