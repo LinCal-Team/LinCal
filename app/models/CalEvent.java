@@ -13,8 +13,8 @@ import java.util.Date;
 public class CalEvent extends Model{
 
     // Constructor
-    public CalEvent(LinCalendar calendar, String eventName, String eventDescription, String starteventDate,
-                    String finishedeventDate, String addressPhysical, String addressOnline)
+    public CalEvent(LinCalendar calendar, String eventName, String eventDescription, Date starteventDate,
+                    Date finishedeventDate, String addressPhysical, String addressOnline)
     {
         this.name = eventName;
         this.description = eventDescription;
@@ -34,17 +34,16 @@ public class CalEvent extends Model{
     public String description;
 
     @Required
-    public String startDate;
+    public Date startDate;
 
     @Required
-    public String endDate;
+    public Date endDate;
 
     public String addressPhysical;
     public String addressOnline;
 
 
     //Atributs
-    @Required
     @ManyToOne
     public LinCalendar calendar;
 

@@ -59,10 +59,15 @@ public class Application extends Controller {
         }
     }
 
-    @Before //(only= {"index","LogIn","SingUp"})
+
+    @Before(unless = {"ChangePage"})
     public static void setCalendarItems()
     {
+
         Date today = new Date();
+        Date CalendarPage = new Date(today.getTime());
+        session.put("DatePage",CalendarPage.getTime());
+
         String[] month =
                 {"Gener",
                         "Febrer",
@@ -77,33 +82,219 @@ public class Application extends Controller {
                         "Novembre",
                         "Decembre"};
         String[] week =
-                {"Dilluns",
+                {       "Diumenge",
+                        "Dilluns",
                         "Dimarts",
                         "Dimecres",
                         "Dijous",
                         "Divendres",
-                        "Dissabte",
-                        "Diumenge"
+                        "Dissabte"
                 };
 
+        /*
         String Monday;
-        if((today.getDate()-today.getDay()+1)>0)
-            Monday = (today.getDate()-today.getDay()+1) + " " + month[today.getMonth()];
-        else
-            Monday = (new Date(today.getYear(), today.getMonth() - 1,0).getDate()
-                    + today.getDate()-today.getDay()+1) + " " + month[today.getMonth()];
+        Date MondayDate;
+        if((today.getDate()-today.getDay()+1)>0) {
+            Monday = (today.getDate() - today.getDay() + 1) + " " + month[today.getMonth()];
+            MondayDate = new Date(today.getYear(),today.getMonth(),today.getDate() - today.getDay() + 1,0,0);
+        }
+        else {
+            Monday = (new Date(today.getYear(), today.getMonth() - 1, 0).getDate()
+                    + today.getDate() - today.getDay() + 1) + " " + month[today.getMonth()-1];
+            MondayDate = new Date(today.getYear(),today.getMonth()-1,(new Date(today.getYear(), today.getMonth() - 1, 0).getDate() + today.getDate() - today.getDay() + 1),0,0);
+        }
 
         String Sunday;
-        if((today.getDate()+7-today.getDay())>new Date(today.getYear(), today.getMonth(),0).getDate())
-            Sunday = (today.getDate()+7-today.getDay() - new Date(today.getYear(), today.getMonth(),0).getDate())
-                    + " " + month[today.getMonth()+1];
-        else
-            Sunday = (today.getDate()+7-today.getDay()) + " " + month[today.getMonth()];
+        Date SundayDate;
+        if((today.getDate()+7-today.getDay())>new Date(today.getYear(), today.getMonth(),0).getDate()) {
+            Sunday = (today.getDate() + 7 - today.getDay() - new Date(today.getYear(), today.getMonth(), 0).getDate())
+                    + " " + month[today.getMonth() + 1];
+            SundayDate = new Date(today.getYear(),(today.getMonth() + 1),(today.getDate() + 7 - today.getDay() - new Date(today.getYear(), today.getMonth(), 0).getDate()),23,59,59);
+        }
+        else {
+            Sunday = (today.getDate() + 7 - today.getDay()) + " " + month[today.getMonth()];
+            SundayDate = new Date(today.getYear(),(today.getMonth()),(today.getDate() + 7 - today.getDay()),23,59,59);
+        }
+        */
+
+
+        Date[] WeekDays = {
+                new Date(CalendarPage.getTime() - (CalendarPage.getDay() - 1)*24*3600*1000), //Dilluns
+                new Date(CalendarPage.getTime() - (CalendarPage.getDay() - 2)*24*60*60*1000), //Dimarts
+                new Date(CalendarPage.getTime() - (CalendarPage.getDay() - 3)*24*60*60*1000), //Dimecres
+                new Date(CalendarPage.getTime() - (CalendarPage.getDay() - 4)*24*60*60*1000), //Dijous
+                new Date(CalendarPage.getTime() - (CalendarPage.getDay() - 5)*24*60*60*1000), //Divendres
+                new Date(CalendarPage.getTime() - (CalendarPage.getDay() - 6)*24*60*60*1000), //Dissabte
+                new Date(CalendarPage.getTime() - (CalendarPage.getDay() - 7)*24*60*60*1000)  //Diumenge
+        };
+        Date[] WeekDaysStart = {
+                new Date(WeekDays[0].getYear(),WeekDays[0].getMonth(),WeekDays[0].getDate(),0,0,0), //Dilluns
+                new Date(WeekDays[1].getYear(),WeekDays[1].getMonth(),WeekDays[1].getDate(),0,0,0), //Dimarts
+                new Date(WeekDays[2].getYear(),WeekDays[2].getMonth(),WeekDays[2].getDate(),0,0,0), //Dimecres
+                new Date(WeekDays[3].getYear(),WeekDays[3].getMonth(),WeekDays[3].getDate(),0,0,0), //Dijous
+                new Date(WeekDays[4].getYear(),WeekDays[4].getMonth(),WeekDays[4].getDate(),0,0,0), //Divendres
+                new Date(WeekDays[5].getYear(),WeekDays[5].getMonth(),WeekDays[5].getDate(),0,0,0), //Dissabte
+                new Date(WeekDays[6].getYear(),WeekDays[6].getMonth(),WeekDays[6].getDate(),0,0,0)  //Diumenge
+        };
+        Date[] WeekDaysEnd = {
+                new Date(WeekDays[0].getYear(),WeekDays[0].getMonth(),WeekDays[0].getDate(),23,59,59), //Dilluns
+                new Date(WeekDays[1].getYear(),WeekDays[1].getMonth(),WeekDays[1].getDate(),23,59,59), //Dimarts
+                new Date(WeekDays[2].getYear(),WeekDays[2].getMonth(),WeekDays[2].getDate(),23,59,59), //Dimecres
+                new Date(WeekDays[3].getYear(),WeekDays[3].getMonth(),WeekDays[3].getDate(),23,59,59), //Dijous
+                new Date(WeekDays[4].getYear(),WeekDays[4].getMonth(),WeekDays[4].getDate(),23,59,59), //Divendres
+                new Date(WeekDays[5].getYear(),WeekDays[5].getMonth(),WeekDays[5].getDate(),23,59,59), //Dissabte
+                new Date(WeekDays[6].getYear(),WeekDays[6].getMonth(),WeekDays[6].getDate(),23,59,59)  //Diumenge
+        };
+        String Monday = WeekDays[0].getDate() + " " + month[WeekDays[0].getMonth()] + " " + (1900 + WeekDays[0].getYear());
+        String Sunday = WeekDays[6].getDate() + " " + month[WeekDays[6].getMonth()] + " " + (1900 + WeekDays[6].getYear());
 
         renderArgs.put("Month", Monday + " - " + Sunday);
         renderArgs.put("Today", today.toLocaleString());
-        renderArgs.put("Week", week[today.getDay()-1]);
+        renderArgs.put("Week", week[today.getDay()]);
+        renderArgs.put("WeekDaysStart", WeekDaysStart);
+        renderArgs.put("WeekDaysEnd", WeekDaysEnd);
 
+        User connectedUser = connectedUser();
+        if (connectedUser != null)
+        {
+            List<CalEvent> events = new ArrayList<>();
+
+            for (LinCalendar cal : connectedUser.ownedCalendars) {
+                for (CalEvent event : cal.events) {
+                    if ((event.startDate.getTime() < WeekDaysEnd[6].getTime()) &&
+                            (event.endDate.getTime() > WeekDaysStart[0].getTime()))
+                        events.add(event);
+                }
+            }
+            for (Subscription s : connectedUser.subscriptions) {
+                LinCalendar cal = s.calendar;
+                for (CalEvent event : cal.events) {
+                    if ((event.startDate.getTime() < WeekDaysEnd[6].getTime()) && (event.endDate.getTime() > WeekDaysStart[0].getTime()))
+                        events.add(event);
+                }
+            }
+
+            renderArgs.put("eventsShow", events);
+        }
+    }
+
+    public static void ChangePage(int page)
+    {
+        Date today = new Date();
+        Date CalendarPage;
+
+        if(page == 0)
+        {
+            CalendarPage = new Date(today.getTime());
+        }
+        else {
+            try {
+                CalendarPage = new Date(Long.valueOf(session.get("DatePage")));
+                CalendarPage = new Date(CalendarPage.getTime() + (long) page * 7 * 24 * 3600 * 1000);
+            } catch (Exception exception) {
+                CalendarPage = new Date(today.getTime() + (long) page * 7 * 24 * 3600 * 1000);
+            }
+        }
+        session.put("DatePage",CalendarPage.getTime());
+
+
+        String[] month =
+                {"Gener",
+                        "Febrer",
+                        "Març",
+                        "Abril",
+                        "Maig",
+                        "Juny",
+                        "Juliol",
+                        "Agost",
+                        "Setembre",
+                        "Octubre",
+                        "Novembre",
+                        "Decembre"};
+        String[] week =
+                {       "Diumenge",
+                        "Dilluns",
+                        "Dimarts",
+                        "Dimecres",
+                        "Dijous",
+                        "Divendres",
+                        "Dissabte"
+                };
+
+        Date[] WeekDays = {
+                new Date(CalendarPage.getTime() - (CalendarPage.getDay() - 1)*24*60*60*1000), //Dilluns
+                new Date(CalendarPage.getTime() - (CalendarPage.getDay() - 2)*24*60*60*1000), //Dimarts
+                new Date(CalendarPage.getTime() - (CalendarPage.getDay() - 3)*24*60*60*1000), //Dimecres
+                new Date(CalendarPage.getTime() - (CalendarPage.getDay() - 4)*24*60*60*1000), //Dijous
+                new Date(CalendarPage.getTime() - (CalendarPage.getDay() - 5)*24*60*60*1000), //Divendres
+                new Date(CalendarPage.getTime() - (CalendarPage.getDay() - 6)*24*60*60*1000), //Dissabte
+                new Date(CalendarPage.getTime() - (CalendarPage.getDay() - 7)*24*60*60*1000)  //Diumenge
+        };
+
+        Date[] WeekDaysStart = {
+                new Date(WeekDays[0].getYear(),WeekDays[0].getMonth(),WeekDays[0].getDate(),0,0,0), //Dilluns
+                new Date(WeekDays[1].getYear(),WeekDays[1].getMonth(),WeekDays[1].getDate(),0,0,0), //Dimarts
+                new Date(WeekDays[2].getYear(),WeekDays[2].getMonth(),WeekDays[2].getDate(),0,0,0), //Dimecres
+                new Date(WeekDays[3].getYear(),WeekDays[3].getMonth(),WeekDays[3].getDate(),0,0,0), //Dijous
+                new Date(WeekDays[4].getYear(),WeekDays[4].getMonth(),WeekDays[4].getDate(),0,0,0), //Divendres
+                new Date(WeekDays[5].getYear(),WeekDays[5].getMonth(),WeekDays[5].getDate(),0,0,0), //Dissabte
+                new Date(WeekDays[6].getYear(),WeekDays[6].getMonth(),WeekDays[6].getDate(),0,0,0)  //Diumenge
+        };
+        Date[] WeekDaysEnd = {
+                new Date(WeekDays[0].getYear(),WeekDays[0].getMonth(),WeekDays[0].getDate(),23,59,59), //Dilluns
+                new Date(WeekDays[1].getYear(),WeekDays[1].getMonth(),WeekDays[1].getDate(),23,59,59), //Dimarts
+                new Date(WeekDays[2].getYear(),WeekDays[2].getMonth(),WeekDays[2].getDate(),23,59,59), //Dimecres
+                new Date(WeekDays[3].getYear(),WeekDays[3].getMonth(),WeekDays[3].getDate(),23,59,59), //Dijous
+                new Date(WeekDays[4].getYear(),WeekDays[4].getMonth(),WeekDays[4].getDate(),23,59,59), //Divendres
+                new Date(WeekDays[5].getYear(),WeekDays[5].getMonth(),WeekDays[5].getDate(),23,59,59), //Dissabte
+                new Date(WeekDays[6].getYear(),WeekDays[6].getMonth(),WeekDays[6].getDate(),23,59,59)  //Diumenge
+        };
+        String Monday = WeekDays[0].getDate() + " " + month[WeekDays[0].getMonth()] + " " + (1900 + WeekDays[0].getYear());
+        String Sunday = WeekDays[6].getDate() + " " + month[WeekDays[6].getMonth()] + " " + (1900 + WeekDays[6].getYear());
+
+        renderArgs.put("Month", Monday + " - " + Sunday);
+        renderArgs.put("Today", today.toLocaleString());
+        renderArgs.put("Week", week[today.getDay()]);
+        renderArgs.put("WeekDaysStart", WeekDaysStart);
+        renderArgs.put("WeekDaysEnd", WeekDaysEnd);
+
+        User connectedUser = connectedUser();
+        if (connectedUser != null)
+        {
+            List<CalEvent> events = new ArrayList<>();
+
+            for (LinCalendar cal : connectedUser.ownedCalendars) {
+                for (CalEvent event : cal.events) {
+                    if ((event.startDate.getTime() < WeekDaysEnd[6].getTime()) &&
+                            (event.endDate.getTime() > WeekDaysStart[0].getTime()))
+                        events.add(event);
+                }
+            }
+            for (Subscription s : connectedUser.subscriptions) {
+                LinCalendar cal = s.calendar;
+                for (CalEvent event : cal.events) {
+                    if ((event.startDate.getTime() < WeekDaysEnd[6].getTime()) && (event.endDate.getTime() > WeekDaysStart[0].getTime()))
+                        events.add(event);
+                }
+            }
+
+            renderArgs.put("eventsShow", events);
+            String userN = connectedUser.userName;
+            render("Application/LogIn.html",userN);
+        }
+    }
+
+    public static Date dateFormatConverter (String date)
+    {
+        int yearDate = (int)Integer.valueOf(date.split("T")[0].split("-")[0])-1900;
+        int monthDate = (int)Integer.valueOf(date.split("T")[0].split("-")[1])-1;
+        int dayDate = (int)Integer.valueOf(date.split("T")[0].split("-")[2]);
+        int hourDate = (int)Integer.valueOf(date.split("T")[1].split(":")[0]);
+        int minuteDate = (int)Integer.valueOf(date.split("T")[1].split(":")[1]);
+
+        Date dateRes = new Date(yearDate,monthDate,dayDate,hourDate,minuteDate);
+
+        return dateRes;
     }
 
     public static boolean initUser (String username)
@@ -325,9 +516,18 @@ public class Application extends Controller {
         render();
     }
 
-    public static void CreateTask(String taskName, String description, String taskDate, String calName)
+    public static void CreateTask(@Required @MaxSize(100) String name, @MaxSize(5000) String description, @Required String date, @Required String calName)
     {
         User owner = User.find("byUsername", session.get("username")).first();
+
+        Date taskDate = dateFormatConverter(date);
+
+        if(validation.hasErrors())
+        {
+            params.flash();
+            Validation.keep();
+            render("Application/CreateTaskForm.html");
+        }
 
         LinCalendar calendar;
         // TODO: no iterar quan ja trobem el calendari
@@ -335,7 +535,7 @@ public class Application extends Controller {
         for (LinCalendar cal : owner.ownedCalendars) {
             if (cal.calName.equals(calName)) {
                 calendar = cal;
-                CalTask task = new CalTask(calendar, taskName, description, taskDate, false);
+                CalTask task = new CalTask(calendar, name, description, taskDate, false);
                 task.save();
                 calendar.tasks.add(task);
                 calendar.save();
@@ -351,9 +551,16 @@ public class Application extends Controller {
         render();
     }
 
-    public static void CreateEvent(String name, String description, String startDate, String endDate, String calName, String addressOnline, String addressPhysical)
+    public static void CreateEvent(@Required @MaxSize(100) String name, @MaxSize(5000) String description, @Required String startDate, @Required String endDate, String addressPhysical, String addressOnline, @Required String calName)
     {
         User owner = User.find("byUsername", session.get("username")).first();
+
+        if(Validation.hasErrors())
+        {
+            params.flash();
+            Validation.keep();
+            render("Application/CreateEventForm.html");
+        }
 
         LinCalendar calendar;
         // TODO: no iterar quan ja trobem el calendari
@@ -361,7 +568,7 @@ public class Application extends Controller {
         for (LinCalendar cal : owner.ownedCalendars) {
             if (cal.calName.equals(calName)) {
                 calendar = cal;
-                CalEvent event= new CalEvent(calendar, name, description, startDate, endDate, addressPhysical, addressOnline );
+                CalEvent event= new CalEvent(calendar, name, description, dateFormatConverter(startDate), dateFormatConverter(endDate), addressPhysical, addressOnline );
                 event.save();
                 calendar.events.add(event);
                 calendar.save();
@@ -415,8 +622,7 @@ public class Application extends Controller {
     }
 
     // Encara no està accessible des de l'aplicació web
-    public static void EditEvent(String calName, String oldEventName, String newEventName, String description, String startDate,
-                                 String endDate, String addressOnline, String addressPhysical)
+    public static void EditEvent(@Required String calName, String oldEventName, @Required @MaxSize(100) String name, @MaxSize(5000) String description, @Required String startDate, @Required String endDate, String addressPhysical, String addressOnline)
     {
         String username = session.get("username");
         User owner = User.find("byUsername", username).first();
@@ -428,12 +634,7 @@ public class Application extends Controller {
                 calendar = cal;
                 for (CalEvent event : cal.events) {
                     if (event.name.equals((oldEventName))) {
-                        event.name = newEventName;
-                        event.addressOnline = addressOnline;
-                        event.addressPhysical = addressPhysical;
-                        event.description = description;
-                        event.startDate = startDate;
-                        event.endDate = endDate;
+                        event = new CalEvent(calendar,name,description,dateFormatConverter(startDate),dateFormatConverter(endDate),addressPhysical,addressOnline);
                         event.save();
                     }
                 }
@@ -442,7 +643,7 @@ public class Application extends Controller {
     }
 
     // Encara no està accessible des de l'aplicació web
-    public static void EditTask(String calName, String oldTaskName, String newTaskName, String description, String date)
+    public static void EditTask(@Required String calName, @Required String oldTaskName, @Required @MaxSize(100) String name, @MaxSize(5000) String description, @Required String date, @Required boolean finished)
     {
         String username = session.get("username");
         User owner = User.find("byUsername", username).first();
@@ -454,9 +655,7 @@ public class Application extends Controller {
                 calendar = cal;
                 for (CalTask task : cal.tasks) {
                     if (task.name.equals((oldTaskName))) {
-                        task.name = newTaskName;
-                        task.description = description;
-                        task.date = date;
+                        task = new CalTask(calendar,name,description,dateFormatConverter(date),finished);
                         task.save();
                     }
                 }
@@ -519,13 +718,13 @@ public class Application extends Controller {
         // -------------------------------------------
 
         // Accio Crear tasques i esdeveniments
-        CalTask tasca1 = new CalTask(calendari1, "Mart 2024", "Elon Musk envia l'home al planteta roig", "31/12/2024", false);
+        CalTask tasca1 = new CalTask(calendari1, "Mart 2024", "Elon Musk envia l'home al planteta roig", new Date(2024,12,31), false);
         tasca1.save();
         calendari1.tasks.add(tasca1);
         calendari1.save();
 
         CalEvent esdeveniment1 = new CalEvent(calendari1, "PES", "Classe setmanal de PES",
-                "13/10/2020", "13/10/2020", "A casa", "www.google.com");
+                new Date(2020,10,13), new Date(2020,10,13), "A casa", "www.google.com");
         esdeveniment1.save();
         calendari1.events.add(esdeveniment1);
         calendari1.save();

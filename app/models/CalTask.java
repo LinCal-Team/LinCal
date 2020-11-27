@@ -13,7 +13,7 @@ import java.util.Date;
 public class CalTask extends Model{
 
     // Constructor
-    public CalTask(LinCalendar calendar, String taskName, String taskDescription, String taskDate, boolean taskfinished)
+    public CalTask(LinCalendar calendar, String taskName, String taskDescription, Date taskDate, boolean taskfinished)
     {
         this.name = taskName;
         this.description = taskDescription;
@@ -31,13 +31,12 @@ public class CalTask extends Model{
     public String description;
 
     @Required
-    public String date;
+    public Date date;
 
     @Required
     public boolean completed;
 
     //Atributs
-    @Required
     @ManyToOne
     public LinCalendar calendar;
 

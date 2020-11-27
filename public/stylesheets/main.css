@@ -48,11 +48,13 @@ CAPÇALERA DEL LOGIN
 
 div.header{
 
+    position: fixed;
     background-color: DarkSlateGray;
     margin: 0%;
     color: white;
-    height: 20%;
+    height: 90px;
     width: 100%;
+    z-index: 10;
 
 }
 
@@ -122,10 +124,11 @@ CALENDARI
 
 .calendar-week {
     width: 100%;
-    background-color: darkslategray;;
+    background-color: darkslategray;
+    text-align: center;
 }
 
-.calendar-week p{
+.calendar-week p,button{
     width: 100%;
     color: white;
     text-align: center;
@@ -146,21 +149,62 @@ CALENDARI
 }
 
 .calendar-days{
-    display: grid;
-    grid-template-columns: auto auto auto auto auto auto auto; /*Els 7 dies de la setmana*/
+    display: flex;
+    /*
+    grid-auto-columns: calc(100%/7);
+    grid-auto-rows: calc(100%/24);
+    grid-template-columns: auto auto auto auto auto auto auto;
+    align-content: none;
+    grid-auto-flow: none;
+     /*Els 7 dies de la setmana*/
     border: 1px;
+    height: 1450px;
+
 }
 
-.calendar-days div{
-    display: grid;
+.calendar-day{
+
     text-align: center;
-    background-color: rgba(255, 255, 255, 0.8);
+    position: relative;
     border: 1px solid rgba(0, 0, 0, 0.8);
-    padding: 20px;
-    font-size: 30px;
-    height: 600px;
+    width: 100%;
 
 }
+
+
+.calendar-events{
+
+    cursor: pointer;
+    position: absolute;
+    background-color: red;
+    color: white;
+    border-radius: 5px;
+    width: 93%;
+    word-break: break-all;
+    word-wrap: break-all;
+    overflow: auto;
+    transition: height 2s, width 2s, z-index 2s;
+    z-index: 2;
+
+}
+
+.calendar-events:hover {
+    width:250%;
+    height:500%;
+    z-index:3;
+}
+
+.calendar-events:hover .hiddenText{
+    visibility:visible;
+}
+
+.hiddenText{
+    visibility:hidden;
+    transition: visibility 1s;
+}
+
+
+
 
 /* ---------------------------------------------
 
