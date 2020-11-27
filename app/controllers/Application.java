@@ -1,6 +1,7 @@
 package controllers;
 
 
+import jdk.nashorn.internal.runtime.linker.LinkerCallSite;
 import play.*;
 import play.mvc.*;
 import java.util.*;
@@ -464,6 +465,13 @@ public class Application extends Controller {
                 renderText("Usuari esborrat!");
             }
         }
+    }
+    public static void AddCalendar()
+    {
+        List <LinCalendar> calendars = LinCalendar.find("byIspublic", true).fetch();
+        renderArgs.put("publicCalendars", calendars);
+
+        render();
     }
 
     public static void CreateCalendarForm()
