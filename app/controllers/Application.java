@@ -1,6 +1,7 @@
 package controllers;
 
 
+import jdk.internal.event.Event;
 import play.*;
 import play.mvc.*;
 import java.util.*;
@@ -268,6 +269,8 @@ public class Application extends Controller {
         }
     }
 
+
+
     public static void CreateTaskForm()
     {
         render();
@@ -323,9 +326,11 @@ public class Application extends Controller {
     }
 
     // Encara no està accessible des de l'aplicació web
-    public static void DeleteEvent(String eventName, String calName)
+    public static void DeleteEvent(long id)
     {
-        String username = session.get("username");
+        CalEvent event = CalEvent.findById(id);
+        event.delete();
+        /*String username = session.get("username");
         User owner = User.find("byUsername", username).first();
         LinCalendar calendar;
 
@@ -339,7 +344,7 @@ public class Application extends Controller {
                     }
                 }
             }
-        }
+        }*/
     }
 
     // Encara no està accessible des de l'aplicació web
