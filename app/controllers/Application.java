@@ -536,7 +536,7 @@ public class Application extends Controller {
 
         LinCalendar calendar;
         // TODO: no iterar quan ja trobem el calendari
-        // TODO: si no es trboa el calendari, misstage d'error
+        // TODO: si no es troba el calendari, misstage d'error
         for (LinCalendar cal : owner.ownedCalendars) {
             if (cal.calName.equals(calName)) {
                 calendar = cal;
