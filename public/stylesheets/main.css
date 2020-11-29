@@ -40,6 +40,178 @@ div.box{
 
 }
 
+/* ---------------------------------------------
+
+CAPÇALERA DEL LOGIN
+
+-----------------------------------------------*/
+
+div.header{
+
+    position: fixed;
+    background-color: DarkSlateGray;
+    margin: 0%;
+    color: white;
+    height: 90px;
+    width: 100%;
+    z-index: 10;
+
+}
+
+.grid-container {
+  content: "";
+  display: grid;
+  grid-gap: 10px;
+  clear: both;
+
+}
+
+
+.header-text{
+width: 100%;
+grid-area: 1/1/span 1/span 8;
+padding: 5px;
+}
+
+.header-button{
+width: 95%;
+grid-area: 1/auto/span 1;
+padding: 5px;
+}
+
+/* ---------------------------------------------
+
+CALENDARI
+
+-----------------------------------------------*/
+
+.calendar-container {
+  content: "";
+  display: flex;
+  padding: 0px;
+  border: 0px;
+  justify-content: center;
+  width: 100%;
+
+}
+
+.calendar {
+  content: "";
+  padding: 0px;
+  border: 0px;
+  clear: both;
+  justify-content: center;
+  background-color: lightgray;
+  width: 70%;
+  align: center;
+
+}
+
+.calendar-month {
+    width: 100%;
+    background-color: darkslategray;
+    display: flex;
+}
+
+.calendar-month button {
+    width: 40%;
+    background-color: darkslategray;
+}
+
+.calendar-month button:hover {
+    background-color: #2f5d5a;
+}
+
+.calendar-week {
+    width: 100%;
+    background-color: darkslategray;
+    text-align: center;
+}
+
+.calendar-week p,button{
+    width: 100%;
+    color: white;
+    text-align: center;
+}
+
+.calendar-weekdays {
+    width: 100%;
+    background-color: #2f5d5a;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    color: white;
+}
+.calendar-weekdays div {
+    width: 100%;
+    align-items: center;
+    color: white;
+}
+
+.calendar-days{
+    display: flex;
+    /*
+    grid-auto-columns: calc(100%/7);
+    grid-auto-rows: calc(100%/24);
+    grid-template-columns: auto auto auto auto auto auto auto;
+    align-content: none;
+    grid-auto-flow: none;
+     /*Els 7 dies de la setmana*/
+    border: 1px;
+    height: 1450px;
+
+}
+
+.calendar-day{
+
+    text-align: center;
+    position: relative;
+    border: 1px solid rgba(0, 0, 0, 0.8);
+    width: 100%;
+
+}
+
+
+.calendar-events{
+
+    cursor: pointer;
+    position: absolute;
+    background-color: red;
+    color: white;
+    border-radius: 5px;
+    width: 93%;
+    word-break: break-all;
+    word-wrap: break-all;
+    overflow: auto;
+    transition: height 2s, width 2s, z-index 2s;
+    z-index: 2;
+
+}
+
+.calendar-events:hover {
+    width:250%;
+    height:500%;
+    z-index:3;
+}
+
+.calendar-events:hover .hiddenText{
+    visibility:visible;
+}
+
+.hiddenText{
+    visibility:hidden;
+    transition: visibility 1s;
+}
+
+
+
+
+/* ---------------------------------------------
+
+BOTONS
+
+-----------------------------------------------*/
+
 input[type=text]{
     width: 100%;
     padding: 12px 20px;
@@ -82,5 +254,9 @@ width: 100%;
 
 button:hover {
   background-color: green;
+}
+
+span.error{
+    color: red;
 }
 

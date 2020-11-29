@@ -6,22 +6,42 @@
 </head>
 <body>
 <div class="box">
-<form action="@{Application.CreateEvent(name, description, startDate, endDate, calName, addressOnline, addressPhysical)}">
+<form action="@{Application.CreateEvent()}">
     <label for="name">Nom de l'esdeveniment:</label><br>
     <input type="text" id="name" name="name"><br>
+    <span class="error">#{error 'name'/}</span><br>
+
     <label for="description">Descripció:</label><br>
     <input type="text" id="description" name="description"><br>
+    <span class="error">#{error 'description'/}</span><br>
+
     <label for="startDate">Data d'inici:</label><br>
-    <input type="text" id="startDate" name="startDate"><br>
+    <input type="datetime-local" id="startDate" name="startDate" value="${today}"><br>
+    <span class="error">#{error 'startDate'/}</span><br>
+
     <label for="endDate">Data de finalització:</label><br>
-    <input type="text" id="endDate" name="endDate"><br>
+    <input type="datetime-local" id="endDate" name="endDate" value="${today} "><br>
+    <span class="error">#{error 'endDate'/}</span><br>
+
     <label for="calName">Calendari:</label><br>
     <input type="text" id="calName" name="calName"><br>
+    <span class="error">#{error 'calName'/}</span><br>
+
     <label for="addressOnline">adreça online:</label><br>
     <input type="text" id="addressOnline" name="addressOnline"><br>
+    <span class="error">#{error 'addressOnline'/}</span><br>
+
     <label for="addressPhysical">adreça física:</label><br>
     <input type="text" id="addressPhysical" name="addressPhysical"><br>
+    <span class="error">#{error 'addressPhysical'/}</span><br>
+
     <input type="submit" value="Crear Esdeveniment">
+
+    #{if flash.error}
+    <p style="color:#c00">
+        ${flash.error}
+    </p>
+    #{/if}
 </form>
 </div>
 

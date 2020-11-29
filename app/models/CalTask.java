@@ -1,5 +1,7 @@
 package models;
 
+import play.data.validation.MaxSize;
+import play.data.validation.Required;
 import play.db.jpa.Model;
 
 import javax.persistence.*;
@@ -11,7 +13,7 @@ import java.util.Date;
 public class CalTask extends Model{
 
     // Constructor
-    public CalTask(LinCalendar calendar, String taskName, String taskDescription, String taskDate, boolean taskfinished)
+    public CalTask(LinCalendar calendar, String taskName, String taskDescription, Date taskDate, boolean taskfinished)
     {
         this.name = taskName;
         this.description = taskDescription;
@@ -21,9 +23,17 @@ public class CalTask extends Model{
     }
 
     // Atributs
+    @Required
+    @MaxSize(100)
     public String name;
+
+    @MaxSize(5000)
     public String description;
-    public String date;
+
+    @Required
+    public Date date;
+
+    @Required
     public boolean completed;
 
     //Atributs
@@ -31,4 +41,11 @@ public class CalTask extends Model{
     public LinCalendar calendar;
 
     //TODO: Afegir atributs i constructor
+
+    //Nom dels elements del CRUD
+    public String toString()
+    {
+        String s = calendar.owner.userName + "->" + calendar.calName + "->" + name;
+        return s;
+    }
 }

@@ -6,12 +6,28 @@
 </head>
 <body>
 
-<div class="box">
-<h3>benvingut a LinCal, ${userN}</h3>
 
-
-<button type="button" onclick="window.location.href='@{Application.DeleteUserForm()}';">
+<div class="grid-container header">
+    <div class="header-text">
+    <h3>benvingut a LinCal, ${userN}</h3>
+    </div>
+    <div class="header-button">
+    <button type="button" onclick="window.location.href='@{Application.Logout()}';">
+    Tanca Sessió
+    </button>
+    </div>
+    <div class="header-button">
+    <button type="button" onclick="window.location.href='@{Application.DeleteUserForm()}';">
     Esborra el compte
+    </button>
+    </div>
+</div>
+
+<br><br><br><br>
+<div class="box">
+
+<button type="button" onclick="window.location.href='@{Application.AddCalendar()}';">
+    Afegeix un calendari
 </button>
 
 <button type="button" onclick="window.location.href='@{Application.CreateCalendarForm()}';">
@@ -26,17 +42,137 @@
     Crea una Esdeveniment
 </button>
 
-<button type="button" onclick="window.location.href='@{Application.Logout()}';">
-    Tanca Sessió
-</button>
 
+</div>
 
-
+<div>
 #{if flash.messageOK}
 <p>
     ${flash.messageOK}
 </p>
 #{/if}
+
+</div>
+
+
+<div class="calendar-container">
+    <div class="calendar">
+    <div class="calendar-month">
+        <button onclick="window.location.href='@{Application.ChangePage(-1)}';"> Setmana anterior</button>
+        <div class="calendar-week">
+            <h1>${Month}</h1>
+            <p>${Week}, ${Today}</p>
+            <button onclick="window.location.href='@{Application.ChangePage(0)}';"> Avui</button>
+        </div>
+        <button onclick="window.location.href='@{Application.ChangePage(1)}';"> Setmana posterior</button>
+
+    </div>
+
+    <div class="calendar-weekdays">
+        <div>Dilluns</div>
+        <div>Dimarts</div>
+        <div>Dimecres</div>
+        <div>Dijous</div>
+        <div>Divendres</div>
+        <div>Dissabte</div>
+        <div>Diumenge</div>
+    </div>
+    <div class="calendar-days">
+
+
+        #{list [1,2,3,4,5,6,0], as:'d'}
+        <div class="calendar-day">
+
+            #{list eventsShow, as:'e'}
+
+            #{if e.startDate.getDay() == d}
+            #{if e.endDate.getDay() == e.startDate.getDay()}
+            <div class="calendar-events" draggable="true" style="
+            height: calc(60 * (${e.endDate.getHours()}px - ${e.startDate.getHours()}px) + (${e.endDate.getMinutes()}px - ${e.startDate.getMinutes()}px));
+            top: calc(60 * ${e.startDate.getHours()}px + ${e.startDate.getMinutes()}px + 5px);
+            left: 3%;
+            "
+            onmouseout="this.style.height='calc(60 * (${e.endDate.getHours()}px - ${e.startDate.getHours()}px) + (${e.endDate.getMinutes()}px - ${e.startDate.getMinutes()}px))'"
+                 onmouseover="this.style.height='max(25%,calc(60 * (${e.endDate.getHours()}px - ${e.startDate.getHours()}px) + (${e.endDate.getMinutes()}px - ${e.startDate.getMinutes()}px)))'"
+            >
+                <h3>${e.name}</h3>
+                <p>Calendar: ${e.calendar.calName}</p>
+                <p style="font-size:11px;">${e.startDate.getDate()}-${e.startDate.getMonth()}, ${e.startDate.getHours()}:${e.startDate.getMinutes()} ~
+                ${e.endDate.getDate()}-${e.endDate.getMonth()}, ${e.endDate.getHours()}:${e.endDate.getMinutes()}</p>
+                <p class="hiddenText">${e.description}</p>
+                <p class="hiddenText">Direcció: ${e.addressPhysical}</p>
+                <p class="hiddenText">Enllaç: <a href="http://${e.addressOnline}" style="background-color:white;">http://${e.addressOnline}</a></p>
+
+            </div>
+            #{/if}
+            #{else}
+            <div class="calendar-events" draggable="true" style="
+            height: calc(60 * (23px - ${e.startDate.getHours()}px) + (60px - ${e.startDate.getMinutes()}px));
+            top: calc(60 * ${e.startDate.getHours()}px + ${e.startDate.getMinutes()}px + 5px);
+            left: 3%;
+            "
+                 onmouseout="this.style.height='calc(60 * (23px - ${e.startDate.getHours()}px) + (60px - ${e.startDate.getMinutes()}px))'"
+                 onmouseover="this.style.height='max(25%,calc(60 * (23px - ${e.startDate.getHours()}px) + (60px - ${e.startDate.getMinutes()}px)))'"
+
+            >
+                <h3>${e.name}</h3>
+                <p>Calendar: ${e.calendar.calName}</p>
+                <p style="font-size:11px;">${e.startDate.getDate()}-${e.startDate.getMonth()}, ${e.startDate.getHours()}:${e.startDate.getMinutes()} ~
+                ${e.endDate.getDate()}-${e.endDate.getMonth()}, ${e.endDate.getHours()}:${e.endDate.getMinutes()}</p>
+                <p class="hiddenText">${e.description}</p>
+                <p class="hiddenText">Direcció: ${e.addressPhysical}</p>
+                <p class="hiddenText">Enllaç: <a href="http://${e.addressOnline}" style="background-color:white;">http://${e.addressOnline}</a></p>
+
+
+            </div>
+            #{/else}
+            #{/if}
+            #{elseif e.endDate.getDay() == d}
+            <div class="calendar-events" draggable="true" style="
+            height: calc(60 * (${e.endDate.getHours()}px) + (${e.endDate.getMinutes()}px));
+            top: 5px;
+            left: 3%;
+            "
+                 onmouseout="this.style.height='calc(60 * (${e.endDate.getHours()}px) + (${e.endDate.getMinutes()}px))'"
+                 onmouseover="this.style.height='max(25,calc(60 * (${e.endDate.getHours()}px) + (${e.endDate.getMinutes()}px)))'"
+            >
+                <h3>${e.name}</h3>
+                <p>Calendar: ${e.calendar.calName}</p>
+                <p style="font-size:11px;">${e.startDate.getDate()}-${e.startDate.getMonth()}, ${e.startDate.getHours()}:${e.startDate.getMinutes()} ~
+                ${e.endDate.getDate()}-${e.endDate.getMonth()}, ${e.endDate.getHours()}:${e.endDate.getMinutes()}</p>
+                <p class="hiddenText">${e.description}</p>
+                <p class="hiddenText">Direcció: ${e.addressPhysical}</p>
+                <p class="hiddenText">Enllaç: <a href="http://${e.addressOnline}" style="background-color:white;">http://${e.addressOnline}</a></p>
+            </div>
+            #{/elseif}
+            <!--
+            {elseif ${e.startDate.getTime()} < ${WeekDaysStart[d].getTime()}}
+            {elseif ${e.endDate.getTime()} < ${WeekDaysEnd[d].getTime()}}
+            <div class="calendar-events" draggable="true" style="
+            height: 1440px;
+            top: 5px;
+            left: 3%;
+            "
+            >
+                <h3>${e.name}</h3>
+                <p>Calendar: ${e.calendar.calName}</p>
+                <p style="font-size:11px;">${e.startDate.getDate()}-${e.startDate.getMonth()}, ${e.startDate.getHours()}:${e.startDate.getMinutes()} ~
+                    ${e.endDate.getDate()}-${e.endDate.getMonth()}, ${e.endDate.getHours()}:${e.endDate.getMinutes()}</p>
+                <p class="hiddenText">${e.description}</p>
+                <p class="hiddenText">Direcció: ${e.addressPhysical}</p>
+                <p class="hiddenText">Enllaç: <a href="http://${e.addressOnline}" style="background-color:white;">http://${e.addressOnline}</a></p>
+            </div>
+            {/elseif}
+            {/elseif}
+            -->
+            #{/list}
+        </div>
+        #{/list}
+
+
+    </div>
+
+    </div>
 
 </div>
 
@@ -62,6 +198,6 @@
     #{/if}
 #{/if}
 
-
+<script src="@{'/public/javascripts/calendar.js'}"></script>
 </body>
 <!--{welcome /}-->

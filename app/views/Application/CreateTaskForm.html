@@ -6,16 +6,30 @@
 </head>
 <body>
 <div class="box">
-<form action="@{Application.CreateTask(taskName, description, taskDate, calName)}">
+<form action="@{Application.CreateTask()}">
     <label for="taskName">Nom de la tasca:</label><br>
-    <input type="text" id="taskName" name="taskName"><br>
+    <input type="text" id="taskName" name="name"><br>
+    <span class="error">#{error 'name'/}</span><br>
+
     <label for="description">Descripció:</label><br>
     <input type="text" id="description" name="description"><br>
+    <span class="error">#{error 'description'/}</span><br>
+
     <label for="taskDate">Data:</label><br>
-    <input type="text" id="taskDate" name="taskDate"><br>
+    <input type="datetime-local" id="taskDate" name="date" value="${today}"><br>
+    <span class="error">#{error 'date'/}</span><br>
+
     <label for="calName">Calendari:</label><br>
     <input type="text" id="calName" name="calName"><br>
+    <span class="error">#{error 'calName'/}</span><br>
+
     <input type="submit" value="Crear tasca">
+
+    #{if flash.error}
+    <p style="color:#c00">
+        ${flash.error}
+    </p>
+    #{/if}
 </form>
 </div>
 </body>

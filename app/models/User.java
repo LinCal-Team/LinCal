@@ -1,6 +1,10 @@
 package models;
 
 
+import play.data.validation.MaxSize;
+import play.data.validation.Required;
+import play.data.validation.Email;
+import play.data.validation.MinSize;
 import play.db.jpa.Model;
 
 import javax.persistence.Entity;
@@ -24,9 +28,21 @@ public class User extends Model {
     }
 
     // Atributs
+
+    @Required
+    @MaxSize(30)
     public String userName;
+
+    @Required
+    @Email
     public String email;
+
+    @Required
+    @MaxSize(100)
     public String fullName;
+
+    @Required
+    @MinSize(4)
     public String password;
 
     //Relacions
@@ -36,5 +52,10 @@ public class User extends Model {
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
     public List<LinCalendar> ownedCalendars;
 
-
+    //Nom dels elements del CRUD
+    public String toString()
+    {
+        String s = userName;
+        return s;
+    }
 }

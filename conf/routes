@@ -16,3 +16,12 @@ GET     /public/                                staticDir:public
 
 GET     /Application/inicialitzarBaseDades       Application.inicialitzarBaseDades
 GET     /Application/LogIn                       Application.LogIn
+GET     /Application/CreateCalendar              Application.CreateCalendarForm
+GET     /Application/CreateEvent                 Application.CreateEventForm
+GET     /Application/CreateTask                  Application.CreateTaskForm
+GET     /Application/CreateUser                  Application.CreateUserForm
+GET     /Application/index                       Application.index
+GET     /Application/SignUp                      Application.SignUp
+
+# Import CRUD routes
+*     /admin           module:crud
