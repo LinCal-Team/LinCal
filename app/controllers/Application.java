@@ -2,6 +2,7 @@ package controllers;
 
 
 import jdk.nashorn.internal.runtime.linker.LinkerCallSite;
+import jdk.internal.event.Event;
 import play.*;
 import play.mvc.*;
 import java.util.*;
@@ -36,8 +37,6 @@ public class Application extends Controller {
                }
            }
            renderArgs.put("events", events);
-
-
        }
     }
 
@@ -360,8 +359,6 @@ public class Application extends Controller {
                 index();
             }
         }
-
-
     }
 
     public static void Logout ()
@@ -590,9 +587,11 @@ public class Application extends Controller {
     }
 
     // Encara no està accessible des de l'aplicació web
-    public static void DeleteEvent(String eventName, String calName)
+    public static void DeleteEvent(long id)
     {
-        String username = session.get("username");
+        CalEvent event = CalEvent.findById(id);
+        event.delete();
+        /*String username = session.get("username");
         User owner = User.find("byUsername", username).first();
         LinCalendar calendar;
 
@@ -606,7 +605,7 @@ public class Application extends Controller {
                     }
                 }
             }
-        }
+        }*/
     }
 
     // Encara no està accessible des de l'aplicació web

@@ -177,27 +177,25 @@
 </div>
 
 #{if events != null}
-#{if events.size() > 0}
-#{table events, as:'e'}
-#{column 'Nom Esdeveniment'}
-${e.name}
-#{/column}
-#{column 'Data d\'Inici'}
-${e.startDate}
-#{/column}
-#{column 'Data de finalització'}
-${e.endDate}
-#{/column}
+    #{if events.size() > 0}
+        #{table events, as:'e'}
+            #{column 'Nom Esdeveniment'}
+            ${e.name}
+            #{/column}
+            #{column 'Data d\'Inici'}
+            ${e.startDate}
+            #{/column}
+            #{column 'Data de finalització'}
+            ${e.endDate}
+            #{/column}
 
-#{column 'Data de finalització'}
-<button type="button">
-    Esborra
-</button>
-#{/column}
-
-#{/table}
-
-#{/if}
+            #{column 'Data de finalització'}
+            <button type="button" onclick="window.location.href='@{Application.DeleteEvent(e.id)}';">
+                Esborra
+            </button>
+            #{/column}
+        #{/table}
+    #{/if}
 #{/if}
 
 <script src="@{'/public/javascripts/calendar.js'}"></script>
