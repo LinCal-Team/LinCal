@@ -3,12 +3,11 @@ package controllers;
 
 //import jdk.nashorn.internal.runtime.linker.LinkerCallSite;
 //import jdk.internal.event.Event;
-import play.*;
+import org.hibernate.Hibernate;
 import play.mvc.*;
 import java.util.*;
 import models.*;
 import play.data.validation.*;
-import play.mvc.results.RenderTemplate;
 
 public class Application extends Controller {
 
@@ -36,7 +35,26 @@ public class Application extends Controller {
                    events.add(event);
                }
            }
+
+           List<CalTask> tasks = new ArrayList<>();
+
+           for (LinCalendar cal : connectedUser.ownedCalendars)
+           {
+               for (CalTask task : cal.tasks)
+               {
+                   tasks.add(task);
+               }
+           }
+           for (Subscription s : connectedUser.subscriptions)
+           {
+               LinCalendar cal = s.calendar;
+               for (CalTask task : cal.tasks)
+               {
+                   tasks.add(task);
+               }
+           }
            renderArgs.put("events", events);
+           renderArgs.put("tasks", tasks);
        }
     }
 
@@ -174,6 +192,7 @@ public class Application extends Controller {
                 }
             }
 
+            // TODO: això està duplicant la funcionalitat de UpdateTemplateArgs no???
             renderArgs.put("eventsShow", events);
         }
     }
@@ -350,6 +369,7 @@ public class Application extends Controller {
                 boolean initOk = initUser(userN);
                 if (initOk)
                 {
+                    updateTemplateArgs();
                     render(userN);
                 }
             }
@@ -544,6 +564,7 @@ public class Application extends Controller {
                 task.save();
                 calendar.tasks.add(task);
                 calendar.save();
+                updateTemplateArgs();
                 flash.put("messageOK", "Tasca creada correctament.");
                 String userN = session.get("username");
                 render("Application/LogIn.html", userN);
@@ -590,107 +611,156 @@ public class Application extends Controller {
     public static void DeleteEvent(long id)
     {
         CalEvent event = CalEvent.findById(id);
+        if(event == null)
+        {
+            session.remove("editableEventId");
+            flash.error("Error: No hem trobat l'esdeveniment!");
+            Logout();
+        }
         event.delete();
-        /*String username = session.get("username");
-        User owner = User.find("byUsername", username).first();
-        LinCalendar calendar;
-
-        // TODO: no iterar quan ja trobem el calendari
-        for (LinCalendar cal : owner.ownedCalendars) {
-            if (cal.calName.equals(calName)) {
-                calendar = cal;
-                for (CalEvent event : cal.events) {
-                    if (event.name.equals((eventName))) {
-                        event.delete();
-                    }
-                }
-            }
-        }*/
+        updateTemplateArgs();
+        flash.put("messageOK", "Esdeveniment esborrat.");
+        render("Application/LogIn.html");
     }
 
     // Encara no està accessible des de l'aplicació web
-    public static void DeleteTask(String taskName, String calName)
+    public static void DeleteTask(long id)
     {
-        String username = session.get("username");
-        User owner = User.find("byUsername", username).first();
-        LinCalendar calendar;
+        CalTask task = CalTask.findById(id);
+        if(task == null)
+        {
+            session.remove("editableTaskId");
+            flash.error("Error: No hem trobat la tasca!!");
+            Logout();
+        }
+        task.delete();
+        updateTemplateArgs();
+        flash.put("messageOK", "Tasca esborrada.");
+        render("Application/LogIn.html");
+    }
 
-        // TODO: no iterar quan ja trobem el calendari
-        for (LinCalendar cal : owner.ownedCalendars) {
-            if (cal.calName.equals(calName)) {
-                calendar = cal;
-                for (CalTask task : cal.tasks) {
-                    if (task.name.equals((taskName))) {
-                        task.delete();
-                    }
-                }
+    public static void EditEventForm(long id)
+    {
+        CalEvent event = CalEvent.findById(id);
+        session.put("editableEventId", event.id);
+        render("Application/EditEventForm.html", event);
+    }
+
+    public static void EditTaskForm(long id)
+    {
+        CalTask task = CalTask.findById(id);
+        session.put("editableTaskId", task.id);
+        render("Application/EditTaskForm.html", task);
+    }
+
+
+    // Encara no està accessible des de l'aplicació web
+    public static void EditEvent(@Required @MaxSize(100) String name,
+                                 @Required @MaxSize(5000) String description,
+                                 @Required String startDate,
+                                 @Required String endDate,
+                                 @Required String addressPhysical,
+                                 @Required String addressOnline)
+    {
+        long id = Long.parseLong(session.get("editableEventId"));
+        CalEvent event = CalEvent.findById(id);
+
+        if(event == null)
+        {
+            session.remove("editableEventId");
+            flash.error("Error: No hem trobat l'esdeveniment!");
+            Logout();
+        }
+        if(Validation.hasErrors())
+        {
+            params.flash();
+            //Validation.keep();
+            render("Application/EditEventForm.html", event);
+        }
+
+       event.addressPhysical = addressPhysical;
+       event.addressOnline = addressOnline;
+       event.description = description;
+       event.name = name;
+       event.startDate = dateFormatConverter(startDate);
+       event.endDate = dateFormatConverter(endDate);
+       event.save();
+
+       session.remove("editableEventId");
+       flash.put("messageOK", "Esdeveniment modificat!");
+       updateTemplateArgs();
+       render("Application/LogIn.html");
+    }
+
+
+
+    // Encara no està accessible des de l'aplicació web
+    public static void EditTask(@Required @MaxSize(100) String name,
+                                @MaxSize(5000) String description,
+                                @Required String date)
+    {
+        long id = Long.parseLong(session.get("editableEventId"));
+        CalTask task = CalTask.findById(id);
+
+        if(task == null)
+        {
+            session.remove("editableTaskId");
+            flash.error("Error: No hem trobat la tasca!");
+            Logout();
+        }
+        if(Validation.hasErrors())
+        {
+            params.flash();
+            //Validation.keep();
+            render("Application/EditTaskForm.html", task);
+        }
+
+        task.name = name;
+        task.description = description;
+        task.date = dateFormatConverter(date);
+        task.save();
+
+        session.remove("editableTaskId");
+        flash.put("messageOK", "Tasca modificada!");
+        updateTemplateArgs();
+        render("Application/LogIn.html");
+    }
+
+    // Encara no està accessible des de l'aplicació web
+    public static void markTaskDone(long id) {
+        {
+            CalTask task = CalTask.findById(id);
+
+            if (task == null) {
+                session.remove("editableTaskId");
+                flash.error("Error: No hem trobat la tasca!");
+                Logout();
             }
+
+            task.completed = true;
+            task.save();
+            updateTemplateArgs();
+            render("Application/LogIn.html");
         }
     }
 
     // Encara no està accessible des de l'aplicació web
-    public static void EditEvent(@Required String calName, String oldEventName, @Required @MaxSize(100) String name, @MaxSize(5000) String description, @Required String startDate, @Required String endDate, String addressPhysical, String addressOnline)
-    {
-        String username = session.get("username");
-        User owner = User.find("byUsername", username).first();
-        LinCalendar calendar;
+    public static void markTaskPending(long id) {
+        {
+            CalTask task = CalTask.findById(id);
 
-        // TODO: no iterar quan ja trobem el calendari
-        for (LinCalendar cal : owner.ownedCalendars) {
-            if (cal.calName.equals(calName)) {
-                calendar = cal;
-                for (CalEvent event : cal.events) {
-                    if (event.name.equals((oldEventName))) {
-                        event = new CalEvent(calendar,name,description,dateFormatConverter(startDate),dateFormatConverter(endDate),addressPhysical,addressOnline);
-                        event.save();
-                    }
-                }
+            if (task == null) {
+                session.remove("editableTaskId");
+                flash.error("Error: No hem trobat la tasca!");
+                Logout();
             }
+
+            task.completed = false;
+            task.save();
+            updateTemplateArgs();
+            render("Application/LogIn.html");
         }
     }
-
-    // Encara no està accessible des de l'aplicació web
-    public static void EditTask(@Required String calName, @Required String oldTaskName, @Required @MaxSize(100) String name, @MaxSize(5000) String description, @Required String date, @Required boolean finished)
-    {
-        String username = session.get("username");
-        User owner = User.find("byUsername", username).first();
-        LinCalendar calendar;
-
-        // TODO: no iterar quan ja trobem el calendari
-        for (LinCalendar cal : owner.ownedCalendars) {
-            if (cal.calName.equals(calName)) {
-                calendar = cal;
-                for (CalTask task : cal.tasks) {
-                    if (task.name.equals((oldTaskName))) {
-                        task = new CalTask(calendar,name,description,dateFormatConverter(date),finished);
-                        task.save();
-                    }
-                }
-            }
-        }
-    }
-
-    // Encara no està accessible des de l'aplicació web
-    public static void markTaskDone(String calName, String taskName)
-    {
-        String username = session.get("username");
-        User owner = User.find("byUsername", username).first();
-        LinCalendar calendar;
-
-        // TODO: no iterar quan ja trobem el calendari
-        for (LinCalendar cal : owner.ownedCalendars) {
-            if (cal.calName.equals(calName)) {
-                calendar = cal;
-                for (CalTask task : cal.tasks) {
-                    if (task.name.equals((taskName))) {
-                        task.completed = true;
-                        task.save();
-                    }
-                }
-            }
-        }
-    }
-
 
     public static void inicialitzarBaseDades(){
 

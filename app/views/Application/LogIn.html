@@ -9,7 +9,7 @@
 
 <div class="grid-container header">
     <div class="header-text">
-    <h3>benvingut a LinCal, ${userN}</h3>
+    <h3>benvingut a LinCal, ${user.userName}</h3>
     </div>
     <div class="header-button">
     <button type="button" onclick="window.location.href='@{Application.Logout()}';">
@@ -176,6 +176,8 @@
 
 </div>
 
+
+
 #{if events != null}
     #{if events.size() > 0}
         #{table events, as:'e'}
@@ -189,14 +191,73 @@
             ${e.endDate}
             #{/column}
 
-            #{column 'Data de finalització'}
+            #{column}
             <button type="button" onclick="window.location.href='@{Application.DeleteEvent(e.id)}';">
                 Esborra
+            </button>
+            #{/column}
+
+            #{column}
+            <button type="button" onclick="window.location.href='@{Application.EditEventForm(e.id)}';">
+                  Edita
             </button>
             #{/column}
         #{/table}
     #{/if}
 #{/if}
+
+
+
+#{if tasks != null}
+#{if tasks.size() > 0}
+#{table tasks, as:'t'}
+#{column 'Nom Tasca'}
+${t.name}
+#{/column}
+#{column 'Data'}
+${t.date}
+#{/column}
+
+#{column 'Completada'}
+#{if t.completed}
+    Sí
+#{/if}
+#{else}
+    No
+#{/else}
+#{/column}
+
+#{column}
+<button type="button" onclick="window.location.href='@{Application.DeleteTask(t.id)}';">
+    Esborra
+</button>
+#{/column}
+
+#{column}
+<button type="button" onclick="window.location.href='@{Application.EditEventForm(t.id)}';">
+    Edita
+</button>
+#{/column}
+
+
+#{column}
+
+    #{if t.completed}
+        <button type="button" onclick="window.location.href='@{Application.markTaskPending(t.id)}';">
+            Marca Pendent
+        </button>
+    #{/if}
+    #{else}
+        <button type="button" onclick="window.location.href='@{Application.markTaskDone(t.id)}';">
+            Marca Completada
+        </button>
+    #{/else}
+#{/column}
+
+#{/table}
+#{/if}
+#{/if}
+
 
 <script src="@{'/public/javascripts/calendar.js'}"></script>
 </body>

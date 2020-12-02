@@ -1,0 +1,32 @@
+<!--#{extends 'main.html' /}-->
+#{set title:'Inici' /}
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div class="box">
+    <form action="@{Application.EditTask()}">
+        <label for="taskName">Nom de la tasca:</label><br>
+        <input type="text" id="taskName" name="name"><br>
+        <span class="error">#{error 'name'/}</span><br>
+
+        <label for="description">Descripció:</label><br>
+        <input type="text" id="description" name="description"><br>
+        <span class="error">#{error 'description'/}</span><br>
+
+        <label for="taskDate">Data:</label><br>
+        <input type="datetime-local" id="taskDate" name="date" value="${today}"><br>
+        <span class="error">#{error 'date'/}</span><br>
+
+        <input type="submit" value="Editar tasca">
+
+        #{if flash.error}
+        <p style="color:#c00">
+            ${flash.error}
+        </p>
+        #{/if}
+    </form>
+</div>
+</body>
+<!--{welcome /}-->
