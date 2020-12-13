@@ -23,5 +23,8 @@ GET     /Application/CreateUser                  Application.CreateUserForm
 GET     /Application/index                       Application.index
 GET     /Application/SignUp                      Application.SignUp
 
+POST    /AndroidController/LogIn                 AndroidController.LogIn
+GET    /AndroidController/LogIn                 AndroidController.LogIn
+
 # Import CRUD routes
-*     /admin           module:crud
+*     /admin           module:cr    ud
