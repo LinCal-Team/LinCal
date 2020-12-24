@@ -16,15 +16,19 @@
     <span class="error">#{error 'description'/}</span><br>
 
     <label for="startDate">Data d'inici:</label><br>
-    <input type="datetime-local" id="startDate" name="startDate" value="${today}"><br>
+    <input type="datetime-local" id="startDate" name="startDate" value="${TodayDateTimeLocal}"><br>
     <span class="error">#{error 'startDate'/}</span><br>
 
     <label for="endDate">Data de finalització:</label><br>
-    <input type="datetime-local" id="endDate" name="endDate" value="${today} "><br>
+    <input type="datetime-local" id="endDate" name="endDate" value="${TodayDateTimeLocal}"><br>
     <span class="error">#{error 'endDate'/}</span><br>
 
     <label for="calName">Calendari:</label><br>
-    <input type="text" id="calName" name="calName"><br>
+    <select id="calName" name="calName" style="width:190px">
+        #{list user.ownedCalendars, as:'cal'}
+        <option value="${cal.calName}">${cal.calName}</option>
+        #{/list}
+    </select><br>
     <span class="error">#{error 'calName'/}</span><br>
 
     <label for="addressOnline">adreça online:</label><br>

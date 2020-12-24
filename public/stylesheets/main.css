@@ -95,6 +95,34 @@ CALENDARI
 
 }
 
+.calendar-list{
+    width: 15%;
+    background-color: darkslategray;
+    overflow: auto;
+   text-align: center;
+}
+
+.calendar-tasks{
+    background-color:#2f5d5a;
+}
+
+.calendar-list button{
+    background-color:#2f5d5a;
+}
+
+.calendar-list button:hover{
+    background-color:#3c7773;
+}
+.calendar-list h2{
+    color:white;
+}
+.calendar-list p{
+    color:white;
+    justify-content: center;
+    align: center;
+}
+
+
 .calendar {
   content: "";
   padding: 0px;

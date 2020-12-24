@@ -16,11 +16,15 @@
     <span class="error">#{error 'description'/}</span><br>
 
     <label for="taskDate">Data:</label><br>
-    <input type="datetime-local" id="taskDate" name="date" value="${today}"><br>
+    <input type="datetime-local" id="taskDate" name="date" value="${TodayDateTimeLocal}"><br>
     <span class="error">#{error 'date'/}</span><br>
 
     <label for="calName">Calendari:</label><br>
-    <input type="text" id="calName" name="calName"><br>
+    <select id="calName" name="calName" style="width:190px">
+    #{list user.ownedCalendars, as:'cal'}
+        <option value="${cal.calName}">${cal.calName}</option>
+        #{/list}
+    </select><br>
     <span class="error">#{error 'calName'/}</span><br>
 
     <input type="submit" value="Crear tasca">

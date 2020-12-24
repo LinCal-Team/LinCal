@@ -166,8 +166,29 @@ public class Application extends Controller {
         String Monday = WeekDays[0].getDate() + " " + month[WeekDays[0].getMonth()] + " " + (1900 + WeekDays[0].getYear());
         String Sunday = WeekDays[6].getDate() + " " + month[WeekDays[6].getMonth()] + " " + (1900 + WeekDays[6].getYear());
 
+        //Fer un String que el DateTime-Local pugui llegir correctament
+        String TodayDateTimeLocal = "0000-00-00T00:00";
+        TodayDateTimeLocal = String.valueOf(1900+today.getYear()) + "-";
+        if(String.valueOf(today.getMonth()).length() == 2)
+            TodayDateTimeLocal += String.valueOf(today.getMonth()) + "-";
+        else
+            TodayDateTimeLocal += "0" + String.valueOf(today.getMonth()) + "-";
+        if(String.valueOf(today.getDate()).length() == 2)
+            TodayDateTimeLocal += String.valueOf(today.getDate()) + "T";
+        else
+            TodayDateTimeLocal += "0" + String.valueOf(today.getDate()) + "T";
+        if(String.valueOf(today.getHours()).length() == 2)
+            TodayDateTimeLocal += String.valueOf(today.getHours()) + ":";
+        else
+            TodayDateTimeLocal += "0" + String.valueOf(today.getHours()) + ":";
+        if(String.valueOf(today.getMinutes()).length() == 2)
+            TodayDateTimeLocal += String.valueOf(today.getMinutes());
+        else
+            TodayDateTimeLocal += "0" + String.valueOf(today.getMinutes());
+
         renderArgs.put("Month", Monday + " - " + Sunday);
-        renderArgs.put("Today", today.toLocaleString());
+        renderArgs.put("Today", today);
+        renderArgs.put("TodayDateTimeLocal",TodayDateTimeLocal);
         renderArgs.put("Week", week[today.getDay()]);
         renderArgs.put("WeekDaysStart", WeekDaysStart);
         renderArgs.put("WeekDaysEnd", WeekDaysEnd);
@@ -192,7 +213,7 @@ public class Application extends Controller {
                 }
             }
 
-            // TODO: això està duplicant la funcionalitat de UpdateTemplateArgs no???
+
             renderArgs.put("eventsShow", events);
         }
     }
@@ -272,7 +293,7 @@ public class Application extends Controller {
         String Sunday = WeekDays[6].getDate() + " " + month[WeekDays[6].getMonth()] + " " + (1900 + WeekDays[6].getYear());
 
         renderArgs.put("Month", Monday + " - " + Sunday);
-        renderArgs.put("Today", today.toLocaleString());
+        renderArgs.put("Today", today);
         renderArgs.put("Week", week[today.getDay()]);
         renderArgs.put("WeekDaysStart", WeekDaysStart);
         renderArgs.put("WeekDaysEnd", WeekDaysEnd);
@@ -299,6 +320,9 @@ public class Application extends Controller {
 
             renderArgs.put("eventsShow", events);
             String userN = connectedUser.userName;
+
+            long calendarSelectedID = Long.valueOf(session.get("calendarSelectedID"));
+            renderArgs.put("calendarSelectedID",calendarSelectedID);
             render("Application/LogIn.html",userN);
         }
     }
@@ -405,7 +429,7 @@ public class Application extends Controller {
 
         if (u!=null)
         {
-            flash.error("Aqest usuari ja existeix!");
+            flash.error("Aquest usuari ja existeix!");
             SignUpForm();
         }
         else
@@ -489,6 +513,14 @@ public class Application extends Controller {
         renderArgs.put("publicCalendars", calendars);
 
         render();
+    }
+
+    public static void SelectCalendar(long calendarId)
+    {
+        renderArgs.put("calendarSelectedID",calendarId);
+        String userN = connectedUser().userName;
+        session.put("calendarSelectedID",calendarId);
+        render("Application/LogIn.html",userN);
     }
 
     public static void CreateCalendarForm()
@@ -580,9 +612,38 @@ public class Application extends Controller {
     public static void CreateEvent(@Required @MaxSize(100) String name, @MaxSize(5000) String description, @Required String startDate, @Required String endDate, String addressPhysical, String addressOnline, @Required String calName)
     {
         User owner = User.find("byUsername", session.get("username")).first();
+        //Obtenim les dates en el format correcte i evitem errors de dates
 
         if(Validation.hasErrors())
         {
+            params.flash();
+            Validation.keep();
+            render("Application/CreateEventForm.html");
+        }
+
+        //Obtenim les dates en el format correcte i evitem errors de dates
+        try {
+            Date startDateFormat = dateFormatConverter(startDate);
+            Date endDateFormat = dateFormatConverter(endDate);
+            if (startDateFormat.getTime() >= endDateFormat.getTime()) //Evita dates on la data d'inici i final estàn canviats o són iguals
+            {
+                flash.error("No pots posar la data inicial després de la data final o que l'esdeveniment comenci i acabi al mateix instant. Aquesta aplicació pel moment no contempla viatges al passat");
+                params.flash();
+                Validation.keep();
+                render("Application/CreateEventForm.html");
+            }
+            else if(startDateFormat.getTime() + 84400000 < endDateFormat.getTime())
+            {
+                flash.error("Els esdeveniments no poden durar més d'un dia sencer");
+                params.flash();
+                Validation.keep();
+                render("Application/CreateEventForm.html");
+
+            }
+        }
+        catch(Exception e)
+        {
+            flash.error("Els formats de les dates són errònies");
             params.flash();
             Validation.keep();
             render("Application/CreateEventForm.html");
