@@ -180,9 +180,16 @@
 
         #{if ((t.calendar.id == calendarSelectedID)||(calendarSelectedID == 0)||(calendarSelectedID == null))}
             <div class="calendar-tasks">
-        <h2>${t.name}</h2>
-        <p>Calendari: ${t.calendar.calName}</p>
-        <p>${t.date.toLocaleString()}</p>
+                <div class="calendar-tasksTitle">
+                    <h2>${t.name}</h2>
+                    <p class="shownText">Calendari: ${t.calendar.calName}</p>
+                    <p class="shownText">${t.date.toLocaleString()}</p>
+                </div>
+                <div class="calendar-tasksDescription">
+                    <p class="hiddenText">Calendari: ${t.calendar.calName}</p>
+                    <p class="hiddenText">${t.date.toLocaleString()}</p>
+                    <p class="hiddenText">${t.description}</p>
+                </div>
             </div>
         #{/if}
         #{/list}
@@ -190,13 +197,20 @@
 
 </div>
 
+<div class="user-elements-box">
+<h1>HISTORIAL D'ELEMENTS</h1>
+<div class="user-elements">
 
-
+    <div class="eventCalendar-list">
+        <h1>ESDEVENIMENTS</h1>
 #{if events != null}
     #{if events.size() > 0}
         #{table events, as:'e'}
             #{column 'Nom Esdeveniment'}
             ${e.name}
+            #{/column}
+            #{column 'Calendari'}
+            ${e.calendar.calName}
             #{/column}
             #{column 'Data d\'Inici'}
             ${e.startDate}
@@ -219,59 +233,65 @@
         #{/table}
     #{/if}
 #{/if}
-
-
+    </div>
+    <div class="taskCalendar-list">
+        <h1>TASQUES</h1>
 
 #{if tasks != null}
 #{if tasks.size() > 0}
 #{table tasks, as:'t'}
-#{column 'Nom Tasca'}
-${t.name}
-#{/column}
-#{column 'Data'}
-${t.date}
-#{/column}
+        #{column 'Nom Tasca'}
+        ${t.name}
+        #{/column}
+        #{column 'Calendari'}
+        ${t.calendar.calName}
+        #{/column}
+        #{column 'Data'}
+        ${t.date}
+        #{/column}
 
-#{column 'Completada'}
-#{if t.completed}
-    Sí
-#{/if}
-#{else}
-    No
-#{/else}
-#{/column}
+        #{column 'Completada'}
+        #{if t.completed}
+            Sí
+        #{/if}
+        #{else}
+            No
+        #{/else}
+        #{/column}
 
-#{column}
-<button type="button" onclick="window.location.href='@{Application.DeleteTask(t.id)}';">
-    Esborra
-</button>
-#{/column}
-
-#{column}
-<button type="button" onclick="window.location.href='@{Application.EditEventForm(t.id)}';">
-    Edita
-</button>
-#{/column}
-
-
-#{column}
-
-    #{if t.completed}
-        <button type="button" onclick="window.location.href='@{Application.markTaskPending(t.id)}';">
-            Marca Pendent
+        #{column}
+        <button type="button" onclick="window.location.href='@{Application.DeleteTask(t.id)}';">
+            Esborra
         </button>
-    #{/if}
-    #{else}
-        <button type="button" onclick="window.location.href='@{Application.markTaskDone(t.id)}';">
-            Marca Completada
+        #{/column}
+
+        #{column}
+        <button type="button" onclick="window.location.href='@{Application.EditEventForm(t.id)}';">
+            Edita
         </button>
-    #{/else}
-#{/column}
+        #{/column}
+
+
+        #{column}
+
+            #{if t.completed}
+                <button type="button" onclick="window.location.href='@{Application.markTaskPending(t.id)}';">
+                    Marca Pendent
+                </button>
+            #{/if}
+            #{else}
+                <button type="button" onclick="window.location.href='@{Application.markTaskDone(t.id)}';">
+                    Marca Completada
+                </button>
+            #{/else}
+        #{/column}
 
 #{/table}
 #{/if}
 #{/if}
-
+    </div>
+</div>
+</div>
 
 <script src="@{'/public/javascripts/calendar.js'}"></script>
 </body>

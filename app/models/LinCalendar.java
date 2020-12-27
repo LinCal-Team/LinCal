@@ -29,7 +29,7 @@ public class LinCalendar extends Model{
     //Atributs
 
     @Required
-    @MaxSize(30)
+    @MaxSize(18)
     public String calName;
 
     @MaxSize(5000)

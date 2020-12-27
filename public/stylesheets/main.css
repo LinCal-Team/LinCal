@@ -85,6 +85,7 @@ CALENDARI
 
 -----------------------------------------------*/
 
+/*Contenidor del calendari*/
 .calendar-container {
   content: "";
   display: flex;
@@ -95,15 +96,12 @@ CALENDARI
 
 }
 
+/*Llista de calendaris*/
 .calendar-list{
     width: 15%;
     background-color: darkslategray;
     overflow: auto;
    text-align: center;
-}
-
-.calendar-tasks{
-    background-color:#2f5d5a;
 }
 
 .calendar-list button{
@@ -122,6 +120,57 @@ CALENDARI
     align: center;
 }
 
+/*Llista de tasques en el calendari*/
+.calendar-tasks{
+    background-color:#2f5d5a;
+    height:150px;
+    width: auto;
+    transition: height 0.5s, width 0.5s, visibility 0s;
+}
+
+.calendar-tasks:hover{
+    background-color:#2f5d5a;
+    height:220px;
+    display:flex;
+}
+
+.calendar-tasks .hiddenText{
+    visibility: hidden;
+}
+
+.calendar-tasks .shownText{
+    visibility: visible;
+}
+
+.calendar-tasks:hover .hiddenText{
+    visibility: visible;
+}
+
+.calendar-tasks:hover .shownText{
+    visibility: hidden;
+}
+
+.calendar-tasks:hover h2{
+    transform: rotate(90deg);
+}
+
+.calendar-tasks:hover .calendar-tasksTitle{
+    width:20%;
+}
+
+.calendar-tasksDescription{
+    background-color: #3c7773;
+    width:0%;
+    height:0%;
+}
+
+.calendar-tasks:hover .calendar-tasksDescription{
+    width:80%;
+    height:auto;
+    background-color: #3c7773;
+}
+
+/*Parts del calendari*/
 
 .calendar {
   content: "";
@@ -199,7 +248,7 @@ CALENDARI
 
 }
 
-
+/*Esdeveniments del calendari*/
 .calendar-events{
 
     cursor: pointer;
@@ -226,13 +275,70 @@ CALENDARI
     visibility:visible;
 }
 
-.hiddenText{
+.calendar-events .hiddenText{
     visibility:hidden;
     transition: visibility 1s;
 }
 
+/*Taules de l'historial d'elements del calendari*/
+.user-elements-box{
+    background-color: darkslategray;
+    text-align: center;
+}
 
+.user-elements{
+    display: flex;
+    width:100%;
+}
 
+/*Taula d'esdeveniments*/
+.eventCalendar-list{
+    width:50%;
+    background-color:white;
+}
+
+.eventCalendar-list h1, th{
+    background-color: #2f5d5a;
+    color: white;
+}
+
+.eventCalendar-list table{
+    width: 100%;
+    overflow-x:auto;
+}
+
+.eventCalendar-list tr:nth-child(even){
+    background-color: #d9d9d9;
+}
+
+.eventCalendar-list button{
+    background-color: #3c7773;
+}
+
+/*Taula de tasques*/
+
+.taskCalendar-list{
+    width:50%;
+    background-color:white;
+}
+
+.taskCalendar-list h1, th{
+    background-color: #2f5d5a;
+    color: white;
+}
+
+.taskCalendar-list table{
+    width: 100%;
+    overflow-x: auto;
+}
+
+.taskCalendar-list tr:nth-child(odd){
+    background-color: #d9d9d9;
+}
+
+.taskCalendar-list button{
+    background-color: #3c7773;
+}
 
 /* ---------------------------------------------
 

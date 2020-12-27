@@ -24,7 +24,7 @@ public class CalTask extends Model{
 
     // Atributs
     @Required
-    @MaxSize(100)
+    @MaxSize(18)
     public String name;
 
     @MaxSize(5000)

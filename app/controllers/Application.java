@@ -135,16 +135,21 @@ public class Application extends Controller {
         }
         */
 
+        //Corrector del Diumenge mal indicat
+        int WeekDayPageIndicator = 0;
+        if (CalendarPage.getDay() == 0)
+            WeekDayPageIndicator = 7;
 
         Date[] WeekDays = {
-                new Date(CalendarPage.getTime() - (CalendarPage.getDay() - 1)*24*3600*1000), //Dilluns
-                new Date(CalendarPage.getTime() - (CalendarPage.getDay() - 2)*24*60*60*1000), //Dimarts
-                new Date(CalendarPage.getTime() - (CalendarPage.getDay() - 3)*24*60*60*1000), //Dimecres
-                new Date(CalendarPage.getTime() - (CalendarPage.getDay() - 4)*24*60*60*1000), //Dijous
-                new Date(CalendarPage.getTime() - (CalendarPage.getDay() - 5)*24*60*60*1000), //Divendres
-                new Date(CalendarPage.getTime() - (CalendarPage.getDay() - 6)*24*60*60*1000), //Dissabte
-                new Date(CalendarPage.getTime() - (CalendarPage.getDay() - 7)*24*60*60*1000)  //Diumenge
+                new Date(CalendarPage.getTime() - (WeekDayPageIndicator + CalendarPage.getDay() - 1)*24*3600*1000), //Dilluns
+                new Date(CalendarPage.getTime() - (WeekDayPageIndicator + CalendarPage.getDay() - 2)*24*60*60*1000), //Dimarts
+                new Date(CalendarPage.getTime() - (WeekDayPageIndicator + CalendarPage.getDay() - 3)*24*60*60*1000), //Dimecres
+                new Date(CalendarPage.getTime() - (WeekDayPageIndicator + CalendarPage.getDay() - 4)*24*60*60*1000), //Dijous
+                new Date(CalendarPage.getTime() - (WeekDayPageIndicator + CalendarPage.getDay() - 5)*24*60*60*1000), //Divendres
+                new Date(CalendarPage.getTime() - (WeekDayPageIndicator + CalendarPage.getDay() - 6)*24*60*60*1000), //Dissabte
+                new Date(CalendarPage.getTime() - (WeekDayPageIndicator + CalendarPage.getDay() - 7)*24*60*60*1000)  //Diumenge
         };
+
         Date[] WeekDaysStart = {
                 new Date(WeekDays[0].getYear(),WeekDays[0].getMonth(),WeekDays[0].getDate(),0,0,0), //Dilluns
                 new Date(WeekDays[1].getYear(),WeekDays[1].getMonth(),WeekDays[1].getDate(),0,0,0), //Dimarts
@@ -261,14 +266,19 @@ public class Application extends Controller {
                         "Dissabte"
                 };
 
+        //Corrector del Diumenge mal indicat
+        int WeekDayPageIndicator = 0;
+        if (CalendarPage.getDay() == 0)
+            WeekDayPageIndicator = 7;
+
         Date[] WeekDays = {
-                new Date(CalendarPage.getTime() - (CalendarPage.getDay() - 1)*24*60*60*1000), //Dilluns
-                new Date(CalendarPage.getTime() - (CalendarPage.getDay() - 2)*24*60*60*1000), //Dimarts
-                new Date(CalendarPage.getTime() - (CalendarPage.getDay() - 3)*24*60*60*1000), //Dimecres
-                new Date(CalendarPage.getTime() - (CalendarPage.getDay() - 4)*24*60*60*1000), //Dijous
-                new Date(CalendarPage.getTime() - (CalendarPage.getDay() - 5)*24*60*60*1000), //Divendres
-                new Date(CalendarPage.getTime() - (CalendarPage.getDay() - 6)*24*60*60*1000), //Dissabte
-                new Date(CalendarPage.getTime() - (CalendarPage.getDay() - 7)*24*60*60*1000)  //Diumenge
+                new Date(CalendarPage.getTime() - (WeekDayPageIndicator + CalendarPage.getDay() - 1)*24*3600*1000), //Dilluns
+                new Date(CalendarPage.getTime() - (WeekDayPageIndicator + CalendarPage.getDay() - 2)*24*60*60*1000), //Dimarts
+                new Date(CalendarPage.getTime() - (WeekDayPageIndicator + CalendarPage.getDay() - 3)*24*60*60*1000), //Dimecres
+                new Date(CalendarPage.getTime() - (WeekDayPageIndicator + CalendarPage.getDay() - 4)*24*60*60*1000), //Dijous
+                new Date(CalendarPage.getTime() - (WeekDayPageIndicator + CalendarPage.getDay() - 5)*24*60*60*1000), //Divendres
+                new Date(CalendarPage.getTime() - (WeekDayPageIndicator + CalendarPage.getDay() - 6)*24*60*60*1000), //Dissabte
+                new Date(CalendarPage.getTime() - (WeekDayPageIndicator + CalendarPage.getDay() - 7)*24*60*60*1000)  //Diumenge
         };
 
         Date[] WeekDaysStart = {
@@ -573,7 +583,7 @@ public class Application extends Controller {
         render();
     }
 
-    public static void CreateTask(@Required @MaxSize(100) String name, @MaxSize(5000) String description, @Required String date, @Required String calName)
+    public static void CreateTask(@Required @MaxSize(18) String name, @MaxSize(5000) String description, @Required String date, @Required String calName)
     {
         User owner = User.find("byUsername", session.get("username")).first();
 
@@ -609,7 +619,7 @@ public class Application extends Controller {
         render();
     }
 
-    public static void CreateEvent(@Required @MaxSize(100) String name, @MaxSize(5000) String description, @Required String startDate, @Required String endDate, String addressPhysical, String addressOnline, @Required String calName)
+    public static void CreateEvent(@Required @MaxSize(18) String name, @MaxSize(5000) String description, @Required String startDate, @Required String endDate, String addressPhysical, String addressOnline, @Required String calName)
     {
         User owner = User.find("byUsername", session.get("username")).first();
         //Obtenim les dates en el format correcte i evitem errors de dates
@@ -716,7 +726,7 @@ public class Application extends Controller {
 
 
     // Encara no està accessible des de l'aplicació web
-    public static void EditEvent(@Required @MaxSize(100) String name,
+    public static void EditEvent(@Required @MaxSize(18) String name,
                                  @Required @MaxSize(5000) String description,
                                  @Required String startDate,
                                  @Required String endDate,
@@ -756,7 +766,7 @@ public class Application extends Controller {
 
 
     // Encara no està accessible des de l'aplicació web
-    public static void EditTask(@Required @MaxSize(100) String name,
+    public static void EditTask(@Required @MaxSize(18) String name,
                                 @MaxSize(5000) String description,
                                 @Required String date)
     {
