@@ -811,7 +811,8 @@ public class Application extends Controller {
                                 @MaxSize(5000) String description,
                                 @Required String date)
     {
-        long id = Long.parseLong(session.get("editableEventId"));
+        //renderText(dateFormatConverter(date));
+        long id = Long.parseLong(session.get("editableTaskId"));
         CalTask task = CalTask.findById(id);
 
         if(task == null)

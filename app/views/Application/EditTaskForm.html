@@ -8,15 +8,15 @@
 <div class="box">
     <form action="@{Application.EditTask()}">
         <label for="taskName">Nom de la tasca:</label><br>
-        <input type="text" id="taskName" name="name"><br>
+        <input type="text" id="taskName" name="name" value="${task.name}"><br>
         <span class="error">#{error 'name'/}</span><br>
 
         <label for="description">Descripció:</label><br>
-        <input type="text" id="description" name="description"><br>
+        <input type="text" id="description" name="description" value="${task.description}"><br>
         <span class="error">#{error 'description'/}</span><br>
 
         <label for="taskDate">Data:</label><br>
-        <input type="datetime-local" id="taskDate" name="date" value="${today}"><br>
+        <input type="datetime-local" id="taskDate" name="date" value="${task.date}"><br>
         <span class="error">#{error 'date'/}</span><br>
 
         <input type="submit" value="Editar tasca">
