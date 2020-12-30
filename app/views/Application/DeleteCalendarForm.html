@@ -1,0 +1,33 @@
+<!--#{extends 'main.html' /}-->
+#{set title:'Inici' /}
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div class="box">
+    <form action="@{Application.DeleteCalendar()}">
+
+        <label for="id">Calendari a esborrar:</label><br>
+        <select id="id" name="id" style="width:190px">
+            #{list user.ownedCalendars, as:'cal'}
+            <option value="${cal.id}">${cal.calName}</option>
+            #{/list}
+        </select><br>
+        <span class="error">#{error 'calName'/}</span><br>
+
+        <label for="check">Sóc conscient que pedré tots els esdeveminents i tasques del calendari i vull continuar amb l'acció</label><br>
+        <input type="radio" id="check" name="check">
+
+        <input type="submit" value="Confirmar">
+
+        #{if flash.error}
+        <p style="color:#c00">
+            ${flash.error}
+        </p>
+        #{/if}
+    </form>
+</div>
+
+</body>
+<!--{welcome /}-->

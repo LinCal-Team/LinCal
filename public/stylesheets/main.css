@@ -114,6 +114,9 @@ CALENDARI
 .calendar-list h2{
     color:white;
 }
+.calendar-list h3{
+    color:white;
+}
 .calendar-list p{
     color:white;
     justify-content: center;

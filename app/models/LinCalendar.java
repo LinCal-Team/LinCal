@@ -1,6 +1,7 @@
 package models;
 
 import com.google.gson.annotations.Expose;
+import net.sf.oval.constraint.Range;
 import play.data.validation.MaxSize;
 import play.data.validation.Required;
 import play.db.jpa.Model;
@@ -9,6 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Date;
 import javax.persistence.*;
+
+import java.util.Random;
+import java.nio.charset.*;
 
 @Entity
 public class LinCalendar extends Model{
@@ -24,7 +28,18 @@ public class LinCalendar extends Model{
         this.events = new ArrayList<CalEvent>();
         this.subscriptions = new ArrayList<Subscription>();
 
-        this.publicLink = "testlink";
+        byte[] array = new byte[16]; // length is bounded by 16
+        Random random = new Random();
+
+        for (int i = 0; i < array.length; i++)
+        {
+            int r = random.nextInt(26) + 97;
+            array[i] = (byte)r;
+        }
+
+        String randString = new String(array, Charset.forName("ASCII"));
+
+        this.publicLink = randString;
     }
 
     //Atributs

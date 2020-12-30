@@ -26,12 +26,12 @@
 <br><br><br><br>
 <div class="box">
 
-<button type="button" onclick="window.location.href='@{Application.AddCalendar()}';">
-    Afegeix un calendari
-</button>
-
 <button type="button" onclick="window.location.href='@{Application.CreateCalendarForm()}';">
     Crear un calendari
+</button>
+
+<button type="button" onclick="window.location.href='@{Application.AddCalendarForm()}';">
+    Afegeix una subscripció
 </button>
 
 <button type="button" onclick="window.location.href='@{Application.CreateTaskForm()}';">
@@ -42,6 +42,15 @@
     Crea una Esdeveniment
 </button>
 
+
+<button type="button" onclick="window.location.href='@{Application.AdminCalendarForm()}';">
+    Administra els calendaris
+</button>
+
+
+<button type="button" onclick="window.location.href='@{Application.DeleteCalendarForm()}';">
+    Esborra un calendari
+</button>
 
 </div>
 
@@ -64,7 +73,7 @@
         #{else}
         <button onclick="window.location.href='@{Application.SelectCalendar(0)}'">Tots els calendaris</button>
         #{/else}
-
+        <h3>Propis</h3>
         #{list user.ownedCalendars, as:'cal'}
         #{if cal.id == calendarSelectedID}
         <button onclick="window.location.href='@{Application.SelectCalendar(cal.id)}'" style="background-color:green">${cal.calName}</button>
@@ -73,6 +82,20 @@
         <button onclick="window.location.href='@{Application.SelectCalendar(cal.id)}'">${cal.calName}</button>
         #{/else}
         #{/list}
+
+        <h3>Subscripcions</h3>
+
+        #{list user.subscriptions, as:'sub'}
+        #{if sub.calendar.id == calendarSelectedID}
+        <button onclick="window.location.href='@{Application.SelectCalendar(sub.calendar.id)}'"
+                style="background-color:green">${sub.calendar.calName}</button>
+        #{/if}
+        #{else}
+        <button onclick="window.location.href='@{Application.SelectCalendar(sub.calendar.id)}'">
+            ${sub.calendar.calName}</button>
+        #{/else}
+        #{/list}
+
     </div>
     <div class="calendar">
     <div class="calendar-month">
