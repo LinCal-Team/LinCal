@@ -1,13 +1,20 @@
 package controllers;
+import play.db.jpa.Model;
+import java.util.concurrent.TimeUnit;
 
 
 //import jdk.nashorn.internal.runtime.linker.LinkerCallSite;
 //import jdk.internal.event.Event;
 import org.hibernate.Hibernate;
+import play.db.jpa.JPA;
 import play.mvc.*;
 import java.util.*;
 import models.*;
 import play.data.validation.*;
+
+import javax.persistence.EntityManager;
+import javax.persistence.LockModeType;
+import javax.persistence.PessimisticLockScope;
 
 public class Application extends Controller {
 
@@ -18,16 +25,23 @@ public class Application extends Controller {
        if (connectedUser != null)
        {
            renderArgs.put("user", connectedUser);
-           List<CalEvent> events = new ArrayList<>();
 
-           for (LinCalendar cal : connectedUser.ownedCalendars)
+           //EntityManager em1 = JPA.createEntityManager();
+           //em1.getTransaction().begin();
+           //CalEvent event = em1.find(CalEvent.class, id, LockModeType.PESSIMISTIC_WRITE);
+
+
+           List<CalEvent> events = new ArrayList<>();
+           User user = User.findById(connectedUser.id);
+
+           for (LinCalendar cal : user.ownedCalendars)
            {
                for (CalEvent event : cal.events)
                {
                    events.add(event);
                }
            }
-           for (Subscription s : connectedUser.subscriptions)
+           for (Subscription s : user.subscriptions)
            {
                LinCalendar cal = s.calendar;
                for (CalEvent event : cal.events)
@@ -38,14 +52,14 @@ public class Application extends Controller {
 
            List<CalTask> tasks = new ArrayList<>();
 
-           for (LinCalendar cal : connectedUser.ownedCalendars)
+           for (LinCalendar cal : user.ownedCalendars)
            {
                for (CalTask task : cal.tasks)
                {
                    tasks.add(task);
                }
            }
-           for (Subscription s : connectedUser.subscriptions)
+           for (Subscription s : user.subscriptions)
            {
                LinCalendar cal = s.calendar;
                for (CalTask task : cal.tasks)
@@ -606,6 +620,8 @@ public class Application extends Controller {
                 task.save();
                 calendar.tasks.add(task);
                 calendar.save();
+                JPA.em().flush();
+                JPA.em().clear();
                 updateTemplateArgs();
                 flash.put("messageOK", "Tasca creada correctament.");
                 String userN = session.get("username");
@@ -669,6 +685,8 @@ public class Application extends Controller {
                 event.save();
                 calendar.events.add(event);
                 calendar.save();
+                JPA.em().flush();
+                JPA.em().clear();
                 updateTemplateArgs();
 
                 flash.put("messageOK", "Esdeveniment creat correctament.");
@@ -681,7 +699,19 @@ public class Application extends Controller {
     // Encara no està accessible des de l'aplicació web
     public static void DeleteEvent(long id)
     {
-        CalEvent event = CalEvent.findById(id);
+        //EntityManager em1 = JPA.createEntityManager();
+
+        //em1.getTransaction().begin();
+        //CalEvent event = em1.find(CalEvent.class, id, LockModeType.PESSIMISTIC_WRITE);
+        //CalEvent event = CalEvent.findById(id);
+
+        //JPA.em().setProperty("javax.persistence.lock.scope", PessimisticLockScope.EXTENDED);
+        //User user = JPA.em().find(User.class, connectedUser().id, LockModeType.PESSIMISTIC_WRITE);
+        //CalEvent event = JPA.em().find(CalEvent.class, id, LockModeType.PESSIMISTIC_WRITE);
+        //JPA.em().find();
+
+        CalEvent event = CalEvent.find("byId", id).first();
+
         if(event == null)
         {
             session.remove("editableEventId");
@@ -689,6 +719,14 @@ public class Application extends Controller {
             Logout();
         }
         event.delete();
+        JPA.em().flush();
+        JPA.em().clear();
+        //User user = User.findById(connectedUser().id);
+        //user.save();
+
+        //em1.getTransaction().commit();
+        //em1.close();
+
         updateTemplateArgs();
         flash.put("messageOK", "Esdeveniment esborrat.");
         render("Application/LogIn.html");
@@ -705,6 +743,8 @@ public class Application extends Controller {
             Logout();
         }
         task.delete();
+        JPA.em().flush();
+        JPA.em().clear();
         updateTemplateArgs();
         flash.put("messageOK", "Tasca esborrada.");
         render("Application/LogIn.html");
@@ -756,6 +796,7 @@ public class Application extends Controller {
        event.startDate = dateFormatConverter(startDate);
        event.endDate = dateFormatConverter(endDate);
        event.save();
+
 
        session.remove("editableEventId");
        flash.put("messageOK", "Esdeveniment modificat!");
