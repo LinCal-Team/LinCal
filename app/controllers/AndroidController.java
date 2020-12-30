@@ -5,6 +5,7 @@ package controllers;
 //import jdk.internal.event.Event;
 //import jdk.nashorn.internal.objects.NativeJSON;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import org.hibernate.Hibernate;
 import play.mvc.*;
@@ -106,8 +107,9 @@ public class AndroidController extends Controller
         renderText(JSONstring);
         */
 
-        Gson gson = new Gson();
-        String jsonObject = gson.toJson(u.ownedCalendars);
+        //Gson gson = new Gson().excludeFieldsWithoutExposeAnnotation().create();
+        Gson gsonBuilder = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+        String jsonObject = gsonBuilder.toJson(u.ownedCalendars);
         renderText(jsonObject);
 
     }
