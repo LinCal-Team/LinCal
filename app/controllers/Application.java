@@ -770,7 +770,7 @@ public class Application extends Controller {
                                 @MaxSize(5000) String description,
                                 @Required String date)
     {
-        renderText(dateFormatConverter(date));
+        //renderText(dateFormatConverter(date));
         long id = Long.parseLong(session.get("editableTaskId"));
         CalTask task = CalTask.findById(id);
 

@@ -3,7 +3,8 @@ package controllers;
 
 //import jdk.nashorn.internal.runtime.linker.LinkerCallSite;
 //import jdk.internal.event.Event;
-import jdk.nashorn.internal.objects.NativeJSON;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import org.hibernate.Hibernate;
 import play.mvc.*;
 import java.util.*;
@@ -36,6 +37,8 @@ public class AndroidController extends Controller
         String username = params.get("user");
 
         User u = User.find("byUsername", username).first();
+
+        /*
         String JSONstring = "userCalendars = [";
 
         for(int i=0; i<u.ownedCalendars.size(); i++)
@@ -100,6 +103,11 @@ public class AndroidController extends Controller
         JSONstring += "]";
 
         renderText(JSONstring);
+        */
+
+        Gson gson = new Gson();
+        String jsonObject = gson.toJson(u.ownedCalendars);
+        renderText(jsonObject);
 
     }
 }
