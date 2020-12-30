@@ -6,6 +6,10 @@
 </head>
 <body>
 
+<button type="button", onclick="window.location.href='@{Application.Index()}';">
+Torna a l'inici
+</button>
+
 #{if user.ownedCalendars != null}
 #{if user.ownedCalendars.size() > 0}
 
@@ -34,13 +38,45 @@
         <input type="checkbox" id="goPublic" name="goPublic">
         #{/else}
 
-
-
         <input type="submit" value="Actualitzar Calendari">
 
+        #{if cal.isPublic}
+        <h3> Subscripcions </h3>
+        #{if cal.subscriptions != null}
+        #{if cal.subscriptions.size() > 0}
+        #{table cal.subscriptions, as:'sub'}
+
+            #{column 'Usuari'}
+            ${sub.user.userName}
+            #{/column}
+
+            #{column 'És editor'}
+            #{if sub.isEditor}
+            Sí
+            #{/if}
+            #{else}
+            No
+            #{/else}
+            #{/column}
+
+            #{column 'Edita permisos'}
+            #{if !sub.isEditor}
+            <button type="button" onclick="window.location.href='@{Application.MakeEditor(sub.id)}';">
+                Fes editor
+            </button>
+            #{/if}
+            #{else}
+            <button type="button" onclick="window.location.href='@{Application.RevokeEditor(sub.id)}';">
+                Revoca Editor
+            </button>
+            #{/else}
+            #{/column}
 
 
-
+        #{/table}
+        #{/if}
+        #{/if}
+        #{/if}
 
 
         #{if flash.error}

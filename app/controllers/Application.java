@@ -532,13 +532,45 @@ public class Application extends Controller {
             }
         }
     }
-    public static void AddCalendarForm()
+
+    public static void ManageSubscriptionsForm()
     {
-        List <LinCalendar> calendars = LinCalendar.find("byIspublic", true).fetch();
-        renderArgs.put("publicCalendars", calendars);
+        List <LinCalendar> publicCalendars = LinCalendar.find("byIspublic", true).fetch();
+        List <LinCalendar> publicCalendarsFiltered = new ArrayList<>();
+        User user = connectedUser();
+        //List <LinCalendar> calendars = LinCalendar.find("byOwner", session.get("username")).fetch();
+        for (LinCalendar cal : publicCalendars)
+        {
+            if (cal.owner != user)
+            {
+                publicCalendarsFiltered.add(cal);
+            }
+        }
+
+        List <LinCalendar> nonSubscribedCalendars = new ArrayList<>();
+        List <LinCalendar> subscribedCalendars = new ArrayList<>();
+
+
+        for (Subscription sub : user.subscriptions)
+        {
+            subscribedCalendars.add(sub.calendar);
+        }
+
+        for (LinCalendar cal : publicCalendarsFiltered)
+        {
+            if (!subscribedCalendars.contains(cal))
+            {
+                nonSubscribedCalendars.add(cal);
+            }
+        }
+
+        renderArgs.put("subscriptions", user.subscriptions);
+        renderArgs.put("nonSubscribedCalendars", nonSubscribedCalendars);
         render();
     }
 
+    // TODO: Controlar que no es pugui subscriure un usuari a un calendari de la seva propietat
+    // TODO: Controlar que no es pugui subscriure un usuari a un calendari al qual ja està subscrit
     public static void AddCalendarSubscription(long id)
     {
         LinCalendar calendar = LinCalendar.findById(id);
@@ -555,8 +587,27 @@ public class Application extends Controller {
             user.subscriptions.add(subscription);
             user.save();
             updateTemplateArgs();
-            flash.put("messageOK", "Subscripció realitzada");
-            render("Application/LogIn.html");
+            ManageSubscriptionsForm();
+        }
+    }
+
+    public static void RemoveCalendarSubscription(long id)
+    {
+        Subscription sub = Subscription.findById(id);
+        if(sub == null)
+        {
+            flash.error("Error: No hem trobat la subscripció!");
+            Logout();
+        }
+
+        else
+        {
+            sub.delete();
+            JPA.em().flush();
+            JPA.em().clear();
+            updateTemplateArgs();
+            setCalendarItems();
+            ManageSubscriptionsForm();
         }
     }
 
@@ -967,7 +1018,23 @@ public class Application extends Controller {
         flash.put("messageOK", "Calendari modificat!");
         updateTemplateArgs();
         setCalendarItems();
-        render("Application/LogIn.html");
+        AdminCalendarForm();
+    }
+
+    public static void MakeEditor(long id)
+    {
+        Subscription sub = Subscription.findById(id);
+        sub.isEditor = true;
+        sub.save();
+        render("Application/AdminCalendarForm.html");
+    }
+
+    public static void RevokeEditor(long id)
+    {
+        Subscription sub = Subscription.findById(id);
+        sub.isEditor = false;
+        sub.save();
+        render("Application/AdminCalendarForm.html");
     }
 
     public static void inicialitzarBaseDades(){
