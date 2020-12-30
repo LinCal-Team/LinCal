@@ -221,14 +221,14 @@
 </div>
 
 <div class="user-elements-box">
-<h1>HISTORIAL D'ELEMENTS</h1>
+<h1>ELEMENTS EDITABLES</h1>
 <div class="user-elements">
 
     <div class="eventCalendar-list">
         <h1>ESDEVENIMENTS</h1>
-#{if events != null}
-    #{if events.size() > 0}
-        #{table events, as:'e'}
+#{if editableEvents != null}
+    #{if editableEvents.size() > 0}
+        #{table editableEvents, as:'e'}
             #{column 'Nom Esdeveniment'}
             ${e.name}
             #{/column}
@@ -260,9 +260,9 @@
     <div class="taskCalendar-list">
         <h1>TASQUES</h1>
 
-#{if tasks != null}
-#{if tasks.size() > 0}
-#{table tasks, as:'t'}
+#{if editableTasks != null}
+#{if editableTasks.size() > 0}
+#{table editableTasks, as:'t'}
         #{column 'Nom Tasca'}
         ${t.name}
         #{/column}

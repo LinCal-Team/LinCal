@@ -21,7 +21,7 @@
 
     <label for="calName">Calendari:</label><br>
     <select id="calName" name="calName" style="width:190px">
-    #{list user.ownedCalendars, as:'cal'}
+    #{list editableCalendars, as:'cal'}
         <option value="${cal.calName}">${cal.calName}</option>
         #{/list}
     </select><br>
