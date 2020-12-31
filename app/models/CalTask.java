@@ -1,5 +1,6 @@
 package models;
 
+import com.google.gson.annotations.Expose;
 import play.data.validation.MaxSize;
 import play.data.validation.Required;
 import play.db.jpa.Model;
@@ -25,15 +26,19 @@ public class CalTask extends Model{
     // Atributs
     @Required
     @MaxSize(18)
+    @Expose(serialize = true)
     public String name;
 
     @MaxSize(5000)
+    @Expose(serialize = true)
     public String description;
 
     @Required
+    @Expose(serialize = true)
     public Date date;
 
     @Required
+    @Expose(serialize = true)
     public boolean completed;
 
     //Atributs
