@@ -1,0 +1,71 @@
+<!--#{extends 'main.html' /}-->
+#{set title:'Inici' /}
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<div class="box">
+<button type="button", onclick="window.location.href='@{Application.Index()}';">
+    Torna a l'inici
+</button>
+</div>
+
+<div class="box">
+    <h2> Calendaris disponibles </h2>
+    #{if nonSubscribedCalendars != null}
+    #{if nonSubscribedCalendars.size() > 0}
+    #{table nonSubscribedCalendars, as:'ncal'}
+    #{column 'Calendari'}
+    ${ncal.calName}
+    #{/column}
+
+    #{column 'Subscripció'}
+    <button type="button", onclick="window.location.href='@{Application.AddCalendarSubscription(ncal.id)}';">
+        Subscriu-me
+    </button>
+    #{/column}
+
+    #{/table}
+
+    #{/if}
+    #{else}
+    <p>No estàs subscrit a cap calendari.</p>
+    #{/else}
+    #{/if}
+    #{else}
+    <p>No estàs subscrit a cap calendari.</p>
+    #{/else}
+</div>
+
+<div class="box">
+    <h2> Subscripcions actives </h2>
+    #{if subscriptions!= null}
+    #{if subscriptions.size() > 0}
+    #{table subscriptions, as:'sub'}
+    #{column 'Calendari'}
+    ${sub.calendar.calName}
+    #{/column}
+
+
+    #{column 'Subscripció'}
+    <button type="button", onclick="window.location.href='@{Application.RemoveCalendarSubscription(sub.id)}';">
+        Elimina
+    </button>
+    #{/column}
+
+    #{/table}
+
+    #{/if}
+    #{else}
+    <p>No hi ha calendaris disponibles.</p>
+    #{/else}
+    #{/if}
+    #{else}
+    <p>No hi ha calendaris disponibles.</p>
+    #{/else}
+</div>
+
+</body>
+<!--{welcome /}-->

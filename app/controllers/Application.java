@@ -26,49 +26,93 @@ public class Application extends Controller {
        {
            renderArgs.put("user", connectedUser);
 
-           //EntityManager em1 = JPA.createEntityManager();
-           //em1.getTransaction().begin();
-           //CalEvent event = em1.find(CalEvent.class, id, LockModeType.PESSIMISTIC_WRITE);
+           List<LinCalendar> editableCalendars = new ArrayList<>();
 
+           for (LinCalendar cal : connectedUser.ownedCalendars)
+           {
+               editableCalendars.add(cal);
+           }
+           for (Subscription sub : connectedUser.subscriptions)
+           {
+               if (sub.isEditor)
+               {
+                   editableCalendars.add(sub.calendar);
+               }
+           }
+           renderArgs.put("editableCalendars", editableCalendars);
 
            List<CalEvent> events = new ArrayList<>();
+           List<CalEvent> editableEvents = new ArrayList<>();
+           List<CalEvent> nonEditableEvents = new ArrayList<>();
            User user = User.findById(connectedUser.id);
 
            for (LinCalendar cal : user.ownedCalendars)
            {
                for (CalEvent event : cal.events)
                {
+                   editableEvents.add(event);
                    events.add(event);
                }
            }
            for (Subscription s : user.subscriptions)
            {
                LinCalendar cal = s.calendar;
-               for (CalEvent event : cal.events)
+               if (s.isEditor)
                {
-                   events.add(event);
+                   for (CalEvent event : cal.events)
+                   {
+                       editableEvents.add(event);
+                       events.add(event);
+                   }
+               }
+               else
+               {
+                   for (CalEvent event : cal.events)
+                   {
+                       nonEditableEvents.add(event);
+                       events.add(event);
+                   }
                }
            }
 
            List<CalTask> tasks = new ArrayList<>();
-
+           List<CalTask> editableTasks = new ArrayList<>();
+           List<CalTask> nonEditableTasks = new ArrayList<>();
            for (LinCalendar cal : user.ownedCalendars)
            {
                for (CalTask task : cal.tasks)
                {
                    tasks.add(task);
+                   editableTasks.add(task);
                }
            }
            for (Subscription s : user.subscriptions)
            {
                LinCalendar cal = s.calendar;
-               for (CalTask task : cal.tasks)
+               if (s.isEditor)
                {
-                   tasks.add(task);
+                   for (CalTask task : cal.tasks)
+                   {
+                       tasks.add(task);
+                       editableTasks.add(task);
+                   }
                }
+               else
+               {
+                   for (CalTask task : cal.tasks)
+                   {
+                       tasks.add(task);
+                       nonEditableTasks.add(task);
+                   }
+               }
+
            }
            renderArgs.put("events", events);
            renderArgs.put("tasks", tasks);
+           renderArgs.put("editableEvents", editableEvents);
+           renderArgs.put("editableTasks", editableTasks);
+           renderArgs.put("nonEditableEvents", nonEditableEvents);
+           renderArgs.put("nonEditableTasks", nonEditableTasks);
        }
     }
 
@@ -82,11 +126,17 @@ public class Application extends Controller {
         }
         else
         {
+            /*
             connectedUser = renderArgs.get("user", User.class);
+
             if (connectedUser == null)
             {
                 connectedUser = User.find("byUsername", username).first();
             }
+            return connectedUser;
+            */
+
+            connectedUser = User.find("byUsername", username).first();
             return connectedUser;
         }
     }
@@ -531,12 +581,83 @@ public class Application extends Controller {
             }
         }
     }
-    public static void AddCalendar()
-    {
-        List <LinCalendar> calendars = LinCalendar.find("byIspublic", true).fetch();
-        renderArgs.put("publicCalendars", calendars);
 
+    public static void ManageSubscriptionsForm()
+    {
+        List <LinCalendar> publicCalendars = LinCalendar.find("byIspublic", true).fetch();
+        List <LinCalendar> publicCalendarsFiltered = new ArrayList<>();
+        User user = connectedUser();
+        //List <LinCalendar> calendars = LinCalendar.find("byOwner", session.get("username")).fetch();
+        for (LinCalendar cal : publicCalendars)
+        {
+            if (cal.owner != user)
+            {
+                publicCalendarsFiltered.add(cal);
+            }
+        }
+
+        List <LinCalendar> nonSubscribedCalendars = new ArrayList<>();
+        List <LinCalendar> subscribedCalendars = new ArrayList<>();
+
+
+        for (Subscription sub : user.subscriptions)
+        {
+            subscribedCalendars.add(sub.calendar);
+        }
+
+        for (LinCalendar cal : publicCalendarsFiltered)
+        {
+            if (!subscribedCalendars.contains(cal))
+            {
+                nonSubscribedCalendars.add(cal);
+            }
+        }
+
+        renderArgs.put("subscriptions", user.subscriptions);
+        renderArgs.put("nonSubscribedCalendars", nonSubscribedCalendars);
         render();
+    }
+
+    // TODO: Controlar que no es pugui subscriure un usuari a un calendari de la seva propietat
+    // TODO: Controlar que no es pugui subscriure un usuari a un calendari al qual ja està subscrit
+    public static void AddCalendarSubscription(long id)
+    {
+        LinCalendar calendar = LinCalendar.findById(id);
+        if(calendar == null)
+        {
+            flash.error("Error: No hem trobat el calendari!");
+            Logout();
+        }
+
+        else
+        {
+            User user = connectedUser();
+            Subscription subscription = new Subscription(user, calendar, false);
+            user.subscriptions.add(subscription);
+            user.save();
+            updateTemplateArgs();
+            ManageSubscriptionsForm();
+        }
+    }
+
+    public static void RemoveCalendarSubscription(long id)
+    {
+        Subscription sub = Subscription.findById(id);
+        if(sub == null)
+        {
+            flash.error("Error: No hem trobat la subscripció!");
+            Logout();
+        }
+
+        else
+        {
+            sub.delete();
+            JPA.em().flush();
+            JPA.em().clear();
+            updateTemplateArgs();
+            setCalendarItems();
+            ManageSubscriptionsForm();
+        }
     }
 
     public static void SelectCalendar(long calendarId)
@@ -553,11 +674,11 @@ public class Application extends Controller {
         render();
     }
 
-    public static void CreateCalendar(String calName, String description)
+    public static void CreateCalendar(String calName, String description, boolean isPublic)
     {
         // TODO: comprovar que l'usuari existeix
         User owner = User.find("byUsername", session.get("username")).first();
-        LinCalendar calendar = new LinCalendar(owner, calName, description,false);
+        LinCalendar calendar = new LinCalendar(owner, calName, description, isPublic);
         calendar.save();
         owner.ownedCalendars.add(calendar);
         owner.save();
@@ -569,27 +690,47 @@ public class Application extends Controller {
 
 
     // Encara no està accessible des de l'aplicació web
-    public static void DeleteCalendar(@Required String calName)
+    public static void DeleteCalendar(long id, boolean check)
     {
         /*if (validation.hasErrors())
         {
             flash.error("Falten camps per omplir.");
             render("Application/DeleteUserForm.html", username);
         }*/
-        String username = session.get("username");
-        User owner = User.find("byUsername", username).first();
-        LinCalendar calendar;
 
-        // TODO: no iterar quan ja trobem el calendari
-        for (LinCalendar cal : owner.ownedCalendars) {
-            if (cal.calName.equals(calName)) {
-                calendar = cal;
-                for (Subscription subscription : calendar.subscriptions) {
-                    subscription.user.subscriptions.remove(subscription);
-                }
-                calendar.delete();
+        if (check)
+        {
+            LinCalendar calendar = LinCalendar.findById(id);
+            if(calendar == null)
+            {
+                session.remove("editableEventId");
+                flash.error("Error: No hem trobat l'esdeveniment!");
+                Logout();
             }
+
+            // TODO: check if this is working correctly
+            for (Subscription subscription : calendar.subscriptions) {
+                subscription.user.subscriptions.remove(subscription);
+            }
+            calendar.delete();
+
+            JPA.em().flush();
+            JPA.em().clear();
+
+            updateTemplateArgs();
+            setCalendarItems();
+            flash.put("messageOK", "Calendari esborrat.");
         }
+        else
+        {
+            flash.put("messageOK", "El calendari no s'ha esborrat.");
+        }
+        render("Application/LogIn.html");
+    }
+
+    public static void DeleteCalendarForm()
+    {
+        render();
     }
 
     public static void CreateTaskForm()
@@ -599,7 +740,7 @@ public class Application extends Controller {
 
     public static void CreateTask(@Required @MaxSize(18) String name, @MaxSize(5000) String description, @Required String date, @Required String calName)
     {
-        User owner = User.find("byUsername", session.get("username")).first();
+        User user = User.find("byUsername", session.get("username")).first();
 
         Date taskDate = dateFormatConverter(date);
 
@@ -613,7 +754,7 @@ public class Application extends Controller {
         LinCalendar calendar;
         // TODO: no iterar quan ja trobem el calendari
         // TODO: si no es troba el calendari, misstage d'error
-        for (LinCalendar cal : owner.ownedCalendars) {
+        for (LinCalendar cal : user.ownedCalendars) {
             if (cal.calName.equals(calName)) {
                 calendar = cal;
                 CalTask task = new CalTask(calendar, name, description, taskDate, false);
@@ -623,10 +764,27 @@ public class Application extends Controller {
                 JPA.em().flush();
                 JPA.em().clear();
                 updateTemplateArgs();
+                setCalendarItems();
                 flash.put("messageOK", "Tasca creada correctament.");
                 String userN = session.get("username");
                 render("Application/LogIn.html", userN);
 
+            }
+        }
+        for (Subscription subscription : user.subscriptions) {
+            if (subscription.calendar.calName.equals(calName)) {
+                calendar = subscription.calendar;
+                CalTask task = new CalTask(calendar, name, description, taskDate, false);
+                task.save();
+                calendar.tasks.add(task);
+                calendar.save();
+                JPA.em().flush();
+                JPA.em().clear();
+                updateTemplateArgs();
+                setCalendarItems();
+                flash.put("messageOK", "Tasca creada correctament.");
+                String userN = session.get("username");
+                render("Application/LogIn.html", userN);
             }
         }
     }
@@ -635,9 +793,11 @@ public class Application extends Controller {
         render();
     }
 
-    public static void CreateEvent(@Required @MaxSize(18) String name, @MaxSize(5000) String description, @Required String startDate, @Required String endDate, String addressPhysical, String addressOnline, @Required String calName)
+    public static void CreateEvent(@Required @MaxSize(18) String name, @MaxSize(5000) String description,
+                                   @Required String startDate, @Required String endDate,
+                                   String addressPhysical, String addressOnline, @Required String calName)
     {
-        User owner = User.find("byUsername", session.get("username")).first();
+        User user = User.find("byUsername", session.get("username")).first();
         //Obtenim les dates en el format correcte i evitem errors de dates
 
         if(Validation.hasErrors())
@@ -678,7 +838,7 @@ public class Application extends Controller {
         LinCalendar calendar;
         // TODO: no iterar quan ja trobem el calendari
         // TODO: si no es trboa el calendari, misstage d'error
-        for (LinCalendar cal : owner.ownedCalendars) {
+        for (LinCalendar cal : user.ownedCalendars) {
             if (cal.calName.equals(calName)) {
                 calendar = cal;
                 CalEvent event= new CalEvent(calendar, name, description, dateFormatConverter(startDate), dateFormatConverter(endDate), addressPhysical, addressOnline );
@@ -688,6 +848,25 @@ public class Application extends Controller {
                 JPA.em().flush();
                 JPA.em().clear();
                 updateTemplateArgs();
+                setCalendarItems();
+
+                flash.put("messageOK", "Esdeveniment creat correctament.");
+                String userN = session.get("username");
+                render("Application/LogIn.html", userN);
+            }
+        }
+
+        for (Subscription subscription : user.subscriptions) {
+            if (subscription.calendar.calName.equals(calName)) {
+                calendar = subscription.calendar;
+                CalEvent event= new CalEvent(calendar, name, description, dateFormatConverter(startDate), dateFormatConverter(endDate), addressPhysical, addressOnline );
+                event.save();
+                calendar.events.add(event);
+                calendar.save();
+                JPA.em().flush();
+                JPA.em().clear();
+                updateTemplateArgs();
+                setCalendarItems();
 
                 flash.put("messageOK", "Esdeveniment creat correctament.");
                 String userN = session.get("username");
@@ -728,6 +907,7 @@ public class Application extends Controller {
         //em1.close();
 
         updateTemplateArgs();
+        setCalendarItems();
         flash.put("messageOK", "Esdeveniment esborrat.");
         render("Application/LogIn.html");
     }
@@ -746,6 +926,7 @@ public class Application extends Controller {
         JPA.em().flush();
         JPA.em().clear();
         updateTemplateArgs();
+        setCalendarItems();
         flash.put("messageOK", "Tasca esborrada.");
         render("Application/LogIn.html");
     }
@@ -801,6 +982,7 @@ public class Application extends Controller {
        session.remove("editableEventId");
        flash.put("messageOK", "Esdeveniment modificat!");
        updateTemplateArgs();
+       setCalendarItems();
        render("Application/LogIn.html");
     }
 
@@ -836,6 +1018,7 @@ public class Application extends Controller {
         session.remove("editableTaskId");
         flash.put("messageOK", "Tasca modificada!");
         updateTemplateArgs();
+        setCalendarItems();
         render("Application/LogIn.html");
     }
 
@@ -853,6 +1036,7 @@ public class Application extends Controller {
             task.completed = true;
             task.save();
             updateTemplateArgs();
+            setCalendarItems();
             render("Application/LogIn.html");
         }
     }
@@ -871,8 +1055,69 @@ public class Application extends Controller {
             task.completed = false;
             task.save();
             updateTemplateArgs();
+            setCalendarItems();
             render("Application/LogIn.html");
         }
+    }
+
+
+    public static void AdminCalendarForm()
+    {
+        render();
+    }
+
+    public static void EditCalendar(@Required long id,
+                                    @Required String calName,
+                                    @Required String description,
+                                    boolean goPublic,
+                                    boolean goPrivate)
+    {
+        LinCalendar cal = LinCalendar.findById(id);
+        if(cal == null)
+        {
+            flash.error("Error: No hem trobat el calendari!");
+            Logout();
+        }
+        if(Validation.hasErrors())
+        {
+            params.flash();
+            //Validation.keep();
+            render("Application/AdminCalendarForm.html");
+        }
+
+        cal.calName = calName;
+        cal.description = description;
+
+        if (goPublic)
+        {
+            cal.isPublic = true;
+        }
+        else if (goPrivate)
+        {
+            cal.isPublic = false;
+        }
+
+        cal.save();
+        flash.put("messageOK", "Calendari modificat!");
+        updateTemplateArgs();
+        setCalendarItems();
+        AdminCalendarForm();
+    }
+
+    public static void MakeEditor(long id)
+    {
+        Subscription sub = Subscription.findById(id);
+        sub.isEditor = true;
+        sub.save();
+        render("Application/AdminCalendarForm.html");
+    }
+
+    public static void RevokeEditor(long id)
+    {
+        Subscription sub = Subscription.findById(id);
+        sub.isEditor = false;
+        sub.save();
+        render("Application/AdminCalendarForm.html");
     }
 
     public static void inicialitzarBaseDades(){
@@ -925,7 +1170,7 @@ public class Application extends Controller {
         List<CalEvent> llistaEvents = CalEvent.findAll();
         List<CalTask> llistaTasks = CalTask.findAll();
 
-        
+
         String nomUsuari = llistaUsers.get(0).fullName;
         String nomUsuari2 = llistaUsers.get(1).fullName;
         String nomCalendari1 = llistaCalendars.get(0).calName;

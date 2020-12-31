@@ -1,0 +1,102 @@
+<!--#{extends 'main.html' /}-->
+#{set title:'Inici' /}
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<button type="button", onclick="window.location.href='@{Application.Index()}';">
+Torna a l'inici
+</button>
+
+#{if user.ownedCalendars != null}
+#{if user.ownedCalendars.size() > 0}
+
+#{list user.ownedCalendars, as:'cal'}
+
+<div class="box">
+    <h3>${cal.calName}</h3>
+    <form action="@{Application.EditCalendar()}">
+
+        <input type="hidden" id="id" name="id" value="${cal.id}">
+
+        <label for="calName">Nom del calendari:</label><br>
+        <input type="text" id="calName" name="calName" value="${cal.calName}"> <br>
+
+        <label for="description">Descripció:</label><br>
+        <input type="text" id="description" name="description" value="${cal.description}"><br>
+
+        #{if cal.isPublic}
+        <h4> Aquest calendari és públic </h4>
+        <label for="goPrivate">Canvia a calendari privat</label><br>
+        <input type="checkbox" id="goPrivate" name="goPrivate">
+        #{/if}
+        #{else}
+        <h4> Aquest calendari és privat </h4>
+        <label for="goPublic">Canvia a calendari públic</label><br>
+        <input type="checkbox" id="goPublic" name="goPublic">
+        #{/else}
+
+        <input type="submit" value="Actualitzar Calendari">
+
+        #{if cal.isPublic}
+        <h3> Subscripcions </h3>
+        #{if cal.subscriptions != null}
+        #{if cal.subscriptions.size() > 0}
+        #{table cal.subscriptions, as:'sub'}
+
+            #{column 'Usuari'}
+            ${sub.user.userName}
+            #{/column}
+
+            #{column 'És editor'}
+            #{if sub.isEditor}
+            Sí
+            #{/if}
+            #{else}
+            No
+            #{/else}
+            #{/column}
+
+            #{column 'Edita permisos'}
+            #{if !sub.isEditor}
+            <button type="button" onclick="window.location.href='@{Application.MakeEditor(sub.id)}';">
+                Fes editor
+            </button>
+            #{/if}
+            #{else}
+            <button type="button" onclick="window.location.href='@{Application.RevokeEditor(sub.id)}';">
+                Revoca Editor
+            </button>
+            #{/else}
+            #{/column}
+
+
+        #{/table}
+        #{/if}
+        #{/if}
+        #{/if}
+
+
+        #{if flash.error}
+        <p style="color:#c00">
+            ${flash.error}
+        </p>
+        #{/if}
+    </form>
+
+
+
+
+</div>
+
+#{/list}
+#{/if}
+#{/if}
+
+
+
+
+</body>
+<!--{welcome /}-->

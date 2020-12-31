@@ -26,12 +26,12 @@
 <br><br><br><br>
 <div class="box">
 
-<button type="button" onclick="window.location.href='@{Application.AddCalendar()}';">
-    Afegeix un calendari
-</button>
-
 <button type="button" onclick="window.location.href='@{Application.CreateCalendarForm()}';">
     Crear un calendari
+</button>
+
+<button type="button" onclick="window.location.href='@{Application.ManageSubscriptionsForm()}';">
+    Modifica les subscripcions
 </button>
 
 <button type="button" onclick="window.location.href='@{Application.CreateTaskForm()}';">
@@ -42,6 +42,15 @@
     Crea una Esdeveniment
 </button>
 
+
+<button type="button" onclick="window.location.href='@{Application.AdminCalendarForm()}';">
+    Administra els calendaris
+</button>
+
+
+<button type="button" onclick="window.location.href='@{Application.DeleteCalendarForm()}';">
+    Esborra un calendari
+</button>
 
 </div>
 
@@ -64,7 +73,7 @@
         #{else}
         <button onclick="window.location.href='@{Application.SelectCalendar(0)}'">Tots els calendaris</button>
         #{/else}
-
+        <h3>Propis</h3>
         #{list user.ownedCalendars, as:'cal'}
         #{if cal.id == calendarSelectedID}
         <button onclick="window.location.href='@{Application.SelectCalendar(cal.id)}'" style="background-color:green">${cal.calName}</button>
@@ -73,6 +82,20 @@
         <button onclick="window.location.href='@{Application.SelectCalendar(cal.id)}'">${cal.calName}</button>
         #{/else}
         #{/list}
+
+        <h3>Subscripcions</h3>
+
+        #{list user.subscriptions, as:'sub'}
+        #{if sub.calendar.id == calendarSelectedID}
+        <button onclick="window.location.href='@{Application.SelectCalendar(sub.calendar.id)}'"
+                style="background-color:green">${sub.calendar.calName}</button>
+        #{/if}
+        #{else}
+        <button onclick="window.location.href='@{Application.SelectCalendar(sub.calendar.id)}'">
+            ${sub.calendar.calName}</button>
+        #{/else}
+        #{/list}
+
     </div>
     <div class="calendar">
     <div class="calendar-month">
@@ -198,14 +221,14 @@
 </div>
 
 <div class="user-elements-box">
-<h1>HISTORIAL D'ELEMENTS</h1>
+<h1>ELEMENTS EDITABLES</h1>
 <div class="user-elements">
 
     <div class="eventCalendar-list">
         <h1>ESDEVENIMENTS</h1>
-#{if events != null}
-    #{if events.size() > 0}
-        #{table events, as:'e'}
+#{if editableEvents != null}
+    #{if editableEvents.size() > 0}
+        #{table editableEvents, as:'e'}
             #{column 'Nom Esdeveniment'}
             ${e.name}
             #{/column}
@@ -237,9 +260,9 @@
     <div class="taskCalendar-list">
         <h1>TASQUES</h1>
 
-#{if tasks != null}
-#{if tasks.size() > 0}
-#{table tasks, as:'t'}
+#{if editableTasks != null}
+#{if editableTasks.size() > 0}
+#{table editableTasks, as:'t'}
         #{column 'Nom Tasca'}
         ${t.name}
         #{/column}
