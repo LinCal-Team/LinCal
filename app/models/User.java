@@ -1,6 +1,7 @@
 package models;
 
 
+import com.google.gson.annotations.Expose;
 import play.data.validation.MaxSize;
 import play.data.validation.Required;
 import play.data.validation.Email;
@@ -31,10 +32,12 @@ public class User extends Model {
 
     @Required
     @MaxSize(30)
+    @Expose(serialize = true)
     public String userName;
 
     @Required
     @Email
+    @Expose(serialize = true)
     public String email;
 
     @Required

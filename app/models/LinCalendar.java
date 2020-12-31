@@ -31,41 +31,40 @@ public class LinCalendar extends Model{
 
     @Required
     @MaxSize(18)
-    @Expose(serialize = false)
+    @Expose(serialize = true)
     public String calName;
 
     @MaxSize(5000)
-    @Expose(serialize = false)
+    @Expose(serialize = true)
     public String description;
 
     @Required
-    @Expose(serialize = false)
+    @Expose(serialize = true)
     public boolean isPublic;
 
     @Required
-    @Expose(serialize = false)
+    @Expose(serialize = true)
     public Date createdAt;
     //public String owner;
-    @Expose(serialize = false)
+
     public String publicLink;
 
     // Relacio amb la llista de subscriptors
     @OneToMany (mappedBy="calendar", cascade=CascadeType.ALL)
-    @Expose(serialize = false)
     public List<Subscription> subscriptions;
 
     // Relacions amb els esdeveniments i tasques
     @OneToMany (mappedBy="calendar", cascade=CascadeType.ALL)
-    @Expose(serialize = false)
+    @Expose(serialize = true)
     public List<CalEvent> events;
 
     @OneToMany (mappedBy="calendar", cascade=CascadeType.ALL)
-    @Expose(serialize = false)
+    @Expose(serialize = true)
     public List<CalTask> tasks;
 
     @Required
     @ManyToOne
-    @Expose(serialize = false)
+    @Expose(serialize = true)
     public User owner;
 
     //TODO: Afegir altres atributs rellevants
