@@ -16,6 +16,33 @@ import play.data.validation.*;
 
 public class AndroidController extends Controller
 {
+    public static void SignUp () {
+        String fullname = params.get("fullname");
+        String email = params.get("email");
+        String username = params.get("user");
+        String password = params.get("password");
+
+        User u = User.find("byUsername",username).first();
+
+        if (u!=null)
+        {
+            renderText("FAIL: EXISTING USER");
+        }
+        else
+        {
+            u = User.find("byEmail", email).first();
+            if (u == null)
+            {
+                User newUser = new User(fullname,email,username, password);
+                newUser.save();
+                renderText("OK");
+            }
+            else
+            {
+                renderText("FAIL: EXISTING EMAIL");
+            }
+        }
+    }
     public static void LogIn () {
         String username = params.get("user");
         String password = params.get("password");
