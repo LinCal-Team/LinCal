@@ -136,8 +136,68 @@ public class AndroidController extends Controller
 
         //Gson gson = new Gson().excludeFieldsWithoutExposeAnnotation().create();
         Gson gsonBuilder = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
-        String jsonObject = gsonBuilder.toJson(u.ownedCalendars);
+
+        List<LinCalendar> ownedCalendars = u.ownedCalendars;
+        List<LinCalendar> editableCalendars = new ArrayList<>();
+        List<LinCalendar> nonEditableCalendars = new ArrayList<>();
+
+        for (Subscription s : u.subscriptions)
+        {
+            LinCalendar cal = s.calendar;
+            if (s.isEditor)
+            {
+                editableCalendars.add(cal);
+            }
+            else
+            {
+                nonEditableCalendars.add(cal);
+            }
+        }
+
+        AndroidSentCalendars sentCalendars = new AndroidSentCalendars(ownedCalendars,editableCalendars,nonEditableCalendars);
+        String jsonObject = gsonBuilder.toJson(sentCalendars);
         renderText(jsonObject);
 
     }
+
+    public static void CreateCalendar()
+    {
+        String username = params.get("user");
+        String password = params.get("password");
+        String calName = params.get("CalName");
+        String description = params.get("description");
+        Boolean isPublic = Boolean.valueOf(params.get("isPublic"));
+
+        User u = User.find("byUsername", username).first();
+
+        if (u == null) {
+
+            renderText("FAIL: NO USER");
+        } else {
+            if (u.password.equals(password))
+            {
+                Boolean exist = false;
+
+                for(LinCalendar cal: u.ownedCalendars)
+                {
+                    if(cal.calName.equals(calName))
+                        exist = true;
+                }
+
+                if(!exist) {
+                    LinCalendar calendar = new LinCalendar(u, calName, description, isPublic);
+                    calendar.save();
+                    u.ownedCalendars.add(calendar);
+                    u.save();
+                    renderText("OK");
+                }
+                else
+                    renderText("EXIST");
+
+            } else {
+                renderText("FAIL: WRONG PASSWORD");
+            }
+        }
+    }
 }
+
