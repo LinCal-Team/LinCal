@@ -12,7 +12,17 @@
 
 <div class="box">
 
-<form action="@{Application.LogIn(username, password)}">
+    <div>
+        #{if flash.messageOK}
+        <p>
+            ${flash.messageOK}
+        </p>
+        #{/if}
+
+    </div>
+
+
+    <form action="@{Application.LogIn(username, password)}">
     <label for="username">Nom d'usuari:</label><br>
     <input type="text" id="username" name="username" placeholder="Nom d'usuari..."><br>
     <label for="password">Contrassenya:</label><br>

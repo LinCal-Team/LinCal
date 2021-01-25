@@ -431,6 +431,7 @@ public class Application extends Controller {
 
     public static void index()
     {
+        flash.clear();
         if (connectedUser() != null)
         {
             String userN = connectedUser().userName;
@@ -514,7 +515,8 @@ public class Application extends Controller {
                 User newUser = user;
                 newUser.save();
                 String userN = newUser.userName;
-                render(userN);
+                flash.put("messageOK", "Benvingut a LinCal, " + userN + ".");
+                render("Application/index.html");
                 // TODO: Afegir vista
             }
             else
@@ -747,7 +749,7 @@ public class Application extends Controller {
         if(validation.hasErrors())
         {
             params.flash();
-            Validation.keep();
+            //Validation.keep();
             render("Application/CreateTaskForm.html");
         }
 
@@ -803,7 +805,7 @@ public class Application extends Controller {
         if(Validation.hasErrors())
         {
             params.flash();
-            Validation.keep();
+            //Validation.keep();
             render("Application/CreateEventForm.html");
         }
 
@@ -815,14 +817,14 @@ public class Application extends Controller {
             {
                 flash.error("No pots posar la data inicial després de la data final o que l'esdeveniment comenci i acabi al mateix instant. Aquesta aplicació pel moment no contempla viatges al passat");
                 params.flash();
-                Validation.keep();
+                //Validation.keep();
                 render("Application/CreateEventForm.html");
             }
             else if(startDateFormat.getTime() + 84400000 < endDateFormat.getTime())
             {
                 flash.error("Els esdeveniments no poden durar més d'un dia sencer");
                 params.flash();
-                Validation.keep();
+                //Validation.keep();
                 render("Application/CreateEventForm.html");
 
             }
@@ -831,7 +833,7 @@ public class Application extends Controller {
         {
             flash.error("Els formats de les dates són errònies");
             params.flash();
-            Validation.keep();
+            //Validation.keep();
             render("Application/CreateEventForm.html");
         }
 
