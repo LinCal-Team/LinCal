@@ -3,8 +3,6 @@ import play.db.jpa.Model;
 import java.util.concurrent.TimeUnit;
 
 
-//import jdk.nashorn.internal.runtime.linker.LinkerCallSite;
-//import jdk.internal.event.Event;
 import org.hibernate.Hibernate;
 import play.db.jpa.JPA;
 import play.mvc.*;
@@ -517,7 +515,6 @@ public class Application extends Controller {
                 String userN = newUser.userName;
                 flash.put("messageOK", "Benvingut a LinCal, " + userN + ".");
                 render("Application/index.html");
-                // TODO: Afegir vista
             }
             else
             {
@@ -620,8 +617,6 @@ public class Application extends Controller {
         render();
     }
 
-    // TODO: Controlar que no es pugui subscriure un usuari a un calendari de la seva propietat
-    // TODO: Controlar que no es pugui subscriure un usuari a un calendari al qual ja està subscrit
     public static void AddCalendarSubscription(long id)
     {
         LinCalendar calendar = LinCalendar.findById(id);
@@ -678,7 +673,6 @@ public class Application extends Controller {
 
     public static void CreateCalendar(String calName, String description, boolean isPublic)
     {
-        // TODO: comprovar que l'usuari existeix
         User owner = User.find("byUsername", session.get("username")).first();
         LinCalendar calendar = new LinCalendar(owner, calName, description, isPublic);
         calendar.save();
@@ -694,12 +688,6 @@ public class Application extends Controller {
     // Encara no està accessible des de l'aplicació web
     public static void DeleteCalendar(long id, boolean check)
     {
-        /*if (validation.hasErrors())
-        {
-            flash.error("Falten camps per omplir.");
-            render("Application/DeleteUserForm.html", username);
-        }*/
-
         if (check)
         {
             LinCalendar calendar = LinCalendar.findById(id);
@@ -710,7 +698,6 @@ public class Application extends Controller {
                 Logout();
             }
 
-            // TODO: check if this is working correctly
             for (Subscription subscription : calendar.subscriptions) {
                 subscription.user.subscriptions.remove(subscription);
             }
@@ -754,8 +741,6 @@ public class Application extends Controller {
         }
 
         LinCalendar calendar;
-        // TODO: no iterar quan ja trobem el calendari
-        // TODO: si no es troba el calendari, misstage d'error
         for (LinCalendar cal : user.ownedCalendars) {
             if (cal.calName.equals(calName)) {
                 calendar = cal;
@@ -838,8 +823,6 @@ public class Application extends Controller {
         }
 
         LinCalendar calendar;
-        // TODO: no iterar quan ja trobem el calendari
-        // TODO: si no es trboa el calendari, misstage d'error
         for (LinCalendar cal : user.ownedCalendars) {
             if (cal.calName.equals(calName)) {
                 calendar = cal;
@@ -880,17 +863,6 @@ public class Application extends Controller {
     // Encara no està accessible des de l'aplicació web
     public static void DeleteEvent(long id)
     {
-        //EntityManager em1 = JPA.createEntityManager();
-
-        //em1.getTransaction().begin();
-        //CalEvent event = em1.find(CalEvent.class, id, LockModeType.PESSIMISTIC_WRITE);
-        //CalEvent event = CalEvent.findById(id);
-
-        //JPA.em().setProperty("javax.persistence.lock.scope", PessimisticLockScope.EXTENDED);
-        //User user = JPA.em().find(User.class, connectedUser().id, LockModeType.PESSIMISTIC_WRITE);
-        //CalEvent event = JPA.em().find(CalEvent.class, id, LockModeType.PESSIMISTIC_WRITE);
-        //JPA.em().find();
-
         CalEvent event = CalEvent.find("byId", id).first();
 
         if(event == null)
@@ -902,11 +874,6 @@ public class Application extends Controller {
         event.delete();
         JPA.em().flush();
         JPA.em().clear();
-        //User user = User.findById(connectedUser().id);
-        //user.save();
-
-        //em1.getTransaction().commit();
-        //em1.close();
 
         updateTemplateArgs();
         setCalendarItems();
@@ -968,10 +935,8 @@ public class Application extends Controller {
         if(Validation.hasErrors())
         {
             params.flash();
-            //Validation.keep();
             render("Application/EditEventForm.html", event);
         }
-
        event.addressPhysical = addressPhysical;
        event.addressOnline = addressOnline;
        event.description = description;
@@ -979,7 +944,6 @@ public class Application extends Controller {
        event.startDate = dateFormatConverter(startDate);
        event.endDate = dateFormatConverter(endDate);
        event.save();
-
 
        session.remove("editableEventId");
        flash.put("messageOK", "Esdeveniment modificat!");
@@ -1122,6 +1086,7 @@ public class Application extends Controller {
         render("Application/AdminCalendarForm.html");
     }
 
+    /*
     public static void inicialitzarBaseDades(){
 
         // Accio Sign-Up
@@ -1182,4 +1147,5 @@ public class Application extends Controller {
 
         render(nomUsuari, nomUsuari2, nomCalendari1, descripcioTasca1, nomEsdeveniment1);
     }
+   */
 }
