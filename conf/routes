@@ -27,4 +27,4 @@ POST    /AndroidController/LogIn                 AndroidController.LogIn
 GET    /AndroidController/LogIn                 AndroidController.LogIn
 
 # Import CRUD routes
-*     /admin           module:cr    ud
+*     /admin                                    module:crud
