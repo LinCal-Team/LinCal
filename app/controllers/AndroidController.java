@@ -17,6 +17,12 @@ import play.data.validation.*;
 
 public class AndroidController extends Controller
 {
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    //Funció SingUp
+    //Crear un usuari a través de l'aplicació d'Android
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
     public static void SignUp () {
         String fullname = params.get("fullname");
         String email = params.get("email");
@@ -44,6 +50,12 @@ public class AndroidController extends Controller
             }
         }
     }
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    //Funció LogIn
+    //Verifica si un usuari és correcte o no
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
     public static void LogIn () {
         String username = params.get("user");
         String password = params.get("password");
@@ -62,78 +74,16 @@ public class AndroidController extends Controller
         }
     }
 
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    //Funció getCalendarList
+    //Obté la llista de calendaris d'un usuari
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
     public static void getCalendarList()
     {
         String username = params.get("user");
 
         User u = User.find("byUsername", username).first();
-
-        /*
-        String JSONstring = "userCalendars = [";
-
-        for(int i=0; i<u.ownedCalendars.size(); i++)
-        {
-            JSONstring += "{" +
-                    " \"id\" : \"" + u.ownedCalendars.get(i).id + "\"," +
-                    " \"name\" : \"" + u.ownedCalendars.get(i).calName + "\"," +
-                    " \"description\" : \"" + u.ownedCalendars.get(i).description + "\"," +
-                    " \"createdAt\" : \"" + u.ownedCalendars.get(i).createdAt + "\"," +
-                    " \"creator\" : \"" + u.ownedCalendars.get(i).owner.userName + "\",";
-
-            JSONstring += " events : [";
-
-            for(int j=0; j<u.ownedCalendars.get(i).events.size(); j++)
-            {
-                JSONstring += "{" +
-                        " \"id\" : \"" + u.ownedCalendars.get(i).events.get(j).id + "\"," +
-                        " \"name\" : \"" + u.ownedCalendars.get(i).events.get(j).name + "\"," +
-                        " \"description\" : \"" + u.ownedCalendars.get(i).events.get(j).description + "\"," +
-                        " \"startDate\" : \"" + u.ownedCalendars.get(i).events.get(j).startDate.toString() + "\"," +
-                        " \"endDate\" : \"" + u.ownedCalendars.get(i).events.get(j).endDate.toString() + "\"," +
-                        " \"addressOnline\" : \"" + u.ownedCalendars.get(i).events.get(j).addressOnline + "\"," +
-                        " \"addressPhysical\" : \"" + u.ownedCalendars.get(i).events.get(j).addressPhysical + "\"" +
-                        "}";
-
-                if(j<(u.ownedCalendars.get(i).events.size()-1))
-                {
-                    JSONstring += ",";
-                }
-            }
-
-            JSONstring += " ]," +
-                    " tasks : [";
-
-            for(int k=0; k<u.ownedCalendars.get(i).tasks.size(); k++)
-            {
-                JSONstring += "{" +
-                        " \"id\" : \"" + u.ownedCalendars.get(i).tasks.get(k).id + "\"," +
-                        " \"name\" : \"" + u.ownedCalendars.get(i).tasks.get(k).name + "\"," +
-                        " \"description\" : \"" + u.ownedCalendars.get(i).tasks.get(k).description + "\"," +
-                        " \"endDate\" : \"" + u.ownedCalendars.get(i).tasks.get(k).date.toString() + "\"," +
-                        " \"completed\" : \"" + u.ownedCalendars.get(i).tasks.get(k).completed + "\"" +
-                        "}";
-
-                if(k<(u.ownedCalendars.get(i).tasks.size()-1))
-                {
-                    JSONstring += ",";
-                }
-            }
-
-            JSONstring += " ]";
-
-            JSONstring += "}";
-
-            if(i<(u.ownedCalendars.size()-1))
-            {
-                JSONstring += ",";
-            }
-
-        }
-
-        JSONstring += "]";
-
-        renderText(JSONstring);
-        */
 
         //Gson gson = new Gson().excludeFieldsWithoutExposeAnnotation().create();
         Gson gsonBuilder = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
@@ -160,6 +110,11 @@ public class AndroidController extends Controller
         renderText(jsonObject);
 
     }
+
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    //Funció CreateCalendar
+    //Crear un calendari a través de l'aplicació
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     public static void CreateCalendar()
     {
@@ -202,6 +157,11 @@ public class AndroidController extends Controller
     }
 
 
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    //Funció CreateEvent
+    //Crear un esdeveniment a través de l'aplicació d'Android
+    //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
     public static void CreateEvent()
     {
         String username = params.get("user");
@@ -240,6 +200,7 @@ public class AndroidController extends Controller
                     }
                     else
                         {
+                            //Busquem el calendari i afegim l'esdeveniment en el calendari
                             LinCalendar calendar;
                             for (LinCalendar cal : u.ownedCalendars) {
                                 if (cal.calName.equals(calName)) {

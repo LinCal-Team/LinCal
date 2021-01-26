@@ -6,6 +6,7 @@ import models.LinCalendar;
 import java.util.ArrayList;
 import java.util.List;
 
+//Classe per poder enviar tots els calendaris a l'aplicació d'android
 public class AndroidSentCalendars {
 
     @Expose(serialize = true)

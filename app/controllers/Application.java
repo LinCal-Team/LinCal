@@ -16,6 +16,11 @@ import javax.persistence.PessimisticLockScope;
 
 public class Application extends Controller {
 
+    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    UpdateTemplateArgs
+    Obté les dades de les tasques i calendaris de l'usuari
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
     @Before
     static void updateTemplateArgs ()
     {
@@ -114,6 +119,11 @@ public class Application extends Controller {
        }
     }
 
+    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ConnectedUser
+    Comprova si un usuari està connectat
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
     static User connectedUser ()
     {
         User connectedUser;
@@ -139,6 +149,11 @@ public class Application extends Controller {
         }
     }
 
+    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    setCalendarItems
+    Actualitza les variables necessaries per organitzar els objectes
+    de dins del calendari
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
     @Before(unless = {"ChangePage"})
     public static void setCalendarItems()
@@ -170,32 +185,6 @@ public class Application extends Controller {
                         "Divendres",
                         "Dissabte"
                 };
-
-        /*
-        String Monday;
-        Date MondayDate;
-        if((today.getDate()-today.getDay()+1)>0) {
-            Monday = (today.getDate() - today.getDay() + 1) + " " + month[today.getMonth()];
-            MondayDate = new Date(today.getYear(),today.getMonth(),today.getDate() - today.getDay() + 1,0,0);
-        }
-        else {
-            Monday = (new Date(today.getYear(), today.getMonth() - 1, 0).getDate()
-                    + today.getDate() - today.getDay() + 1) + " " + month[today.getMonth()-1];
-            MondayDate = new Date(today.getYear(),today.getMonth()-1,(new Date(today.getYear(), today.getMonth() - 1, 0).getDate() + today.getDate() - today.getDay() + 1),0,0);
-        }
-
-        String Sunday;
-        Date SundayDate;
-        if((today.getDate()+7-today.getDay())>new Date(today.getYear(), today.getMonth(),0).getDate()) {
-            Sunday = (today.getDate() + 7 - today.getDay() - new Date(today.getYear(), today.getMonth(), 0).getDate())
-                    + " " + month[today.getMonth() + 1];
-            SundayDate = new Date(today.getYear(),(today.getMonth() + 1),(today.getDate() + 7 - today.getDay() - new Date(today.getYear(), today.getMonth(), 0).getDate()),23,59,59);
-        }
-        else {
-            Sunday = (today.getDate() + 7 - today.getDay()) + " " + month[today.getMonth()];
-            SundayDate = new Date(today.getYear(),(today.getMonth()),(today.getDate() + 7 - today.getDay()),23,59,59);
-        }
-        */
 
         //Corrector del Diumenge mal indicat
         int WeekDayPageIndicator = 0;
@@ -284,6 +273,12 @@ public class Application extends Controller {
             renderArgs.put("eventsShow", events);
         }
     }
+
+    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ChangePage
+    Actualitza les variables necessaries per organitzar els objectes
+    de dins del calendari quan es canvia de pàgina
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
     public static void ChangePage(int page)
     {
@@ -399,6 +394,11 @@ public class Application extends Controller {
         }
     }
 
+    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    DateFormatConverter
+    Converteix una string que prové del html en un format Date
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
     public static Date dateFormatConverter (String date)
     {
         int yearDate = (int)Integer.valueOf(date.split("T")[0].split("-")[0])-1900;
@@ -411,6 +411,11 @@ public class Application extends Controller {
 
         return dateRes;
     }
+
+    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    initUser
+    Busca un usuari a partir del nom
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
     public static boolean initUser (String username)
     {
@@ -426,6 +431,12 @@ public class Application extends Controller {
             return true;
         }
     }
+
+    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    Index
+    Inicialitza la pantalla principal o accedeix dintre de la sessió
+    de l'usuari si aquest ja ha entrat anteriorment
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
     public static void index()
     {
@@ -443,6 +454,11 @@ public class Application extends Controller {
 
     // Per executar servei des del navegador
     // localhost:9000/Application/inicialitzarBaseDades
+    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    LogIn
+    Accedeix a la sessió d'un usuari sempre i quan les dades estiguin
+    correctes
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
     public static void LogIn(@Required String username,@Required String password){
          if (validation.hasErrors())
@@ -478,16 +494,32 @@ public class Application extends Controller {
         }
     }
 
+    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    LogOut
+    Tanca la sessió d'un usuari borrant la informació guardada en
+    la cookie
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
     public static void Logout ()
     {
         session.remove("username");
         renderTemplate("Application/index.html");
     }
 
+    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    SingUpForm
+    T'envia a la vista de creació de registre d'un usuari
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
     public static void SignUpForm()
     {
         render();
     }
+
+    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    SingUp
+    Registre, si és possible, l'usuari
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
     public static void SignUp(@Valid User user)
     {
@@ -524,6 +556,11 @@ public class Application extends Controller {
         }
     }
 
+    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    DeleteUserForm
+    Va a la pantalla per verificar l'usuari abans de borrar-lo
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
     public static void DeleteUserForm()
     {
         String username = session.get("username");
@@ -537,6 +574,11 @@ public class Application extends Controller {
             render(username);
         }
     }
+
+    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    DeleteUser
+    Intenta borrar l'usuari si el nom i la contrassenya són correctes
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
     public static void DeleteUser(@Required String username, @Required String password)
     {
@@ -581,6 +623,11 @@ public class Application extends Controller {
         }
     }
 
+    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ManageSubscriptionForm
+    T'envia a la vista de administració de subscripcions
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
     public static void ManageSubscriptionsForm()
     {
         List <LinCalendar> publicCalendars = LinCalendar.find("byIspublic", true).fetch();
@@ -617,6 +664,11 @@ public class Application extends Controller {
         render();
     }
 
+    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    AddCalendarSubscription
+    Es subscribeix a un calendari
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
     public static void AddCalendarSubscription(long id)
     {
         LinCalendar calendar = LinCalendar.findById(id);
@@ -636,6 +688,11 @@ public class Application extends Controller {
             ManageSubscriptionsForm();
         }
     }
+
+    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    RemoveCalendarSubscription
+    Funció per desubscribir-te d'un calendari
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
     public static void RemoveCalendarSubscription(long id)
     {
@@ -657,6 +714,13 @@ public class Application extends Controller {
         }
     }
 
+    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    SelectCalendar
+    Selecciona un dels calendaris de la llista per veure només
+    els esdeveniments i tasques d'aquest calendari en el calendari
+    global
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
     public static void SelectCalendar(long calendarId)
     {
         renderArgs.put("calendarSelectedID",calendarId);
@@ -665,11 +729,21 @@ public class Application extends Controller {
         render("Application/LogIn.html",userN);
     }
 
+    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    CreateCalendarForm
+    T'envia a la pantalla de creació de calendaris
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
     public static void CreateCalendarForm()
     {
         String username = session.get("username");
         render();
     }
+
+    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    CreateCalendar
+    Intenta crear un calendari amb les dades especificades
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
     public static void CreateCalendar(String calName, String description, boolean isPublic)
     {
@@ -684,8 +758,11 @@ public class Application extends Controller {
         render("Application/LogIn.html", userN);
     }
 
+    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    DeleteCalendar
+    Borra un calendari
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-    // Encara no està accessible des de l'aplicació web
     public static void DeleteCalendar(long id, boolean check)
     {
         if (check)
@@ -717,15 +794,31 @@ public class Application extends Controller {
         render("Application/LogIn.html");
     }
 
+    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    DeleteCalendarForm
+    T'envia a la vista d'eliminació de calendaris
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
     public static void DeleteCalendarForm()
     {
         render();
     }
 
+    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    CreateTaskForm
+    T'envia a la vista de creació d'una tasca per especificar la
+    informació de la tasca
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
     public static void CreateTaskForm()
     {
         render();
     }
+
+    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    CreateTask
+    Intenta crear una tasca a través de la informació especificada
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
     public static void CreateTask(@Required @MaxSize(18) String name, @MaxSize(5000) String description, @Required String date, @Required String calName)
     {
@@ -775,10 +868,22 @@ public class Application extends Controller {
             }
         }
     }
+
+    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    CreateEventForm
+    T'envia a la vista de creació d'un esdeveniment per especificar
+    la seva informació
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
     public static void CreateEventForm()
     {
         render();
     }
+
+    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    CreateEvent
+    Intenta crear un esdeveniment amb les dades especificades
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
     public static void CreateEvent(@Required @MaxSize(18) String name, @MaxSize(5000) String description,
                                    @Required String startDate, @Required String endDate,
@@ -860,7 +965,11 @@ public class Application extends Controller {
         }
     }
 
-    // Encara no està accessible des de l'aplicació web
+    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    DeleteEvent
+    Intenta borrar un esdeveniment
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
     public static void DeleteEvent(long id)
     {
         CalEvent event = CalEvent.find("byId", id).first();
@@ -881,7 +990,11 @@ public class Application extends Controller {
         render("Application/LogIn.html");
     }
 
-    // Encara no està accessible des de l'aplicació web
+    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    DeleteTask
+    Intenta borrar una tasca
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
     public static void DeleteTask(long id)
     {
         CalTask task = CalTask.findById(id);
@@ -900,12 +1013,22 @@ public class Application extends Controller {
         render("Application/LogIn.html");
     }
 
+    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    EditEventForm
+    T'envia a la pantalla d'edició d'un esdeveniment
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
     public static void EditEventForm(long id)
     {
         CalEvent event = CalEvent.findById(id);
         session.put("editableEventId", event.id);
         render("Application/EditEventForm.html", event);
     }
+
+    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    EditTaskForm
+    T'envia a la pantalla d'edició d'una tasca
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
     public static void EditTaskForm(long id)
     {
@@ -915,7 +1038,11 @@ public class Application extends Controller {
     }
 
 
-    // Encara no està accessible des de l'aplicació web
+    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    EditEvent
+    Intenta editar un esdeveniment ja creat
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
     public static void EditEvent(@Required @MaxSize(18) String name,
                                  @Required @MaxSize(5000) String description,
                                  @Required String startDate,
@@ -954,7 +1081,11 @@ public class Application extends Controller {
 
 
 
-    // Encara no està accessible des de l'aplicació web
+    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    EditTask
+    Intenta editar una tasca ja creada
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
     public static void EditTask(@Required @MaxSize(18) String name,
                                 @MaxSize(5000) String description,
                                 @Required String date)
@@ -988,7 +1119,11 @@ public class Application extends Controller {
         render("Application/LogIn.html");
     }
 
-    // Encara no està accessible des de l'aplicació web
+    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    MarkTaskDone
+    Marca una tasca com a completada
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
     public static void markTaskDone(long id) {
         {
             CalTask task = CalTask.findById(id);
@@ -1007,7 +1142,11 @@ public class Application extends Controller {
         }
     }
 
-    // Encara no està accessible des de l'aplicació web
+    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    MarkTaskPending
+    Marca una tasca com a pendent
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
     public static void markTaskPending(long id) {
         {
             CalTask task = CalTask.findById(id);
@@ -1026,11 +1165,20 @@ public class Application extends Controller {
         }
     }
 
+    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    AdminCalendarForm
+    T'envia a la pantalla d'administració de calendaris
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
     public static void AdminCalendarForm()
     {
         render();
     }
+
+    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    EditCalendar
+    Intenta editar un calendari
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
     public static void EditCalendar(@Required long id,
                                     @Required String calName,
@@ -1070,6 +1218,11 @@ public class Application extends Controller {
         AdminCalendarForm();
     }
 
+    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    MakeEditor
+    Permet a un altre usuari editar el calendari
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
     public static void MakeEditor(long id)
     {
         Subscription sub = Subscription.findById(id);
@@ -1077,6 +1230,11 @@ public class Application extends Controller {
         sub.save();
         render("Application/AdminCalendarForm.html");
     }
+
+    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    RevokeEditor
+    Revoca el permís d'edició a un usuari
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
     public static void RevokeEditor(long id)
     {
