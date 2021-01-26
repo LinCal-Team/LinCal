@@ -14,6 +14,9 @@ import javax.persistence.*;
 import java.util.Random;
 import java.nio.charset.*;
 
+// entitat que representa els calendaris.
+// l'atribut isPublic permet que el calendari sigui
+// vist per tots els usuaris de l'aplicació, i que aquests s'hi subscriguin.
 @Entity
 public class LinCalendar extends Model{
 
@@ -28,17 +31,16 @@ public class LinCalendar extends Model{
         this.events = new ArrayList<CalEvent>();
         this.subscriptions = new ArrayList<Subscription>();
 
+        // generació d'un token pseudoaleatori que funcionarà com un enllaç públic al calendari.
+        // la funcionalitat encara no està implementada al controlador per poder fer anar aquests enllaços.
         byte[] array = new byte[16]; // length is bounded by 16
         Random random = new Random();
-
         for (int i = 0; i < array.length; i++)
         {
             int r = random.nextInt(26) + 97;
             array[i] = (byte)r;
         }
-
         String randString = new String(array, Charset.forName("ASCII"));
-
         this.publicLink = randString;
     }
 
@@ -60,7 +62,6 @@ public class LinCalendar extends Model{
     @Required
     @Expose(serialize = true)
     public Date createdAt;
-    //public String owner;
 
     public String publicLink;
 
@@ -81,8 +82,6 @@ public class LinCalendar extends Model{
     @ManyToOne
     @Expose(serialize = true)
     public User owner;
-
-    //TODO: Afegir altres atributs rellevants
 
     //Nom dels elements del CRUD
     public String toString()

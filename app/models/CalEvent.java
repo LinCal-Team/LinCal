@@ -10,6 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Date;
 
+// entitat que representa un esdeveniment
+// A banda dels camps d'informació, té una relació ManyToOne amb el calendari
+// del qual forma part.
 @Entity
 public class CalEvent extends Model{
 
@@ -50,12 +53,9 @@ public class CalEvent extends Model{
     @Expose(serialize = true)
     public String addressOnline;
 
-
-    //Atributs
+    // Relacions
     @ManyToOne
     public LinCalendar calendar;
-
-    //TODO: Afegir atributs i constructor
 
     //Nom dels elements del CRUD
     public String toString()

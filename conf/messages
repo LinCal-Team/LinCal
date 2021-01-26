@@ -2,4 +2,5 @@
 # For example, for French create a messages.fr file
 #
 
+# misstge a mostrar per cada camp d'un formulari que falla la validació
 validation.required = Camp obligatori

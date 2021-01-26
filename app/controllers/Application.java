@@ -16,9 +16,11 @@ import javax.persistence.PessimisticLockScope;
 
 public class Application extends Controller {
 
+
     /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     UpdateTemplateArgs
-    Obté les dades de les tasques i calendaris de l'usuari
+    Actualitza les estructures de dades que s'utilitzen per
+    generar les plantilles html.
      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
     @Before
@@ -29,6 +31,7 @@ public class Application extends Controller {
        {
            renderArgs.put("user", connectedUser);
 
+           // llista de calendaris propis i de tercers amb permisos d'edició per part de l'usuari
            List<LinCalendar> editableCalendars = new ArrayList<>();
 
            for (LinCalendar cal : connectedUser.ownedCalendars)
@@ -44,11 +47,17 @@ public class Application extends Controller {
            }
            renderArgs.put("editableCalendars", editableCalendars);
 
+           // llista d'esdeveniments dels calendaris propis i les subscripcions
            List<CalEvent> events = new ArrayList<>();
-           List<CalEvent> editableEvents = new ArrayList<>();
-           List<CalEvent> nonEditableEvents = new ArrayList<>();
-           User user = User.findById(connectedUser.id);
 
+           // llista dels esdeveniments amb permisos d'edició
+           List<CalEvent> editableEvents = new ArrayList<>();
+
+           // llista d'esdeveniments amb permisos de visualització
+           List<CalEvent> nonEditableEvents = new ArrayList<>();
+
+           // omplim les llistes
+           User user = User.findById(connectedUser.id);
            for (LinCalendar cal : user.ownedCalendars)
            {
                for (CalEvent event : cal.events)
@@ -78,6 +87,7 @@ public class Application extends Controller {
                }
            }
 
+           // separem les tasques igual que els esdeveniments, per tasques editables i no editables
            List<CalTask> tasks = new ArrayList<>();
            List<CalTask> editableTasks = new ArrayList<>();
            List<CalTask> nonEditableTasks = new ArrayList<>();
@@ -110,6 +120,8 @@ public class Application extends Controller {
                }
 
            }
+
+           // guardem les llistes als renderArgs
            renderArgs.put("events", events);
            renderArgs.put("tasks", tasks);
            renderArgs.put("editableEvents", editableEvents);
@@ -121,7 +133,8 @@ public class Application extends Controller {
 
     /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ConnectedUser
-    Comprova si un usuari està connectat
+    aquest mètode retorna l'usuari de la sessió. Si la sessió no
+    està iniciada, retorna null.
      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
     static User connectedUser ()
@@ -134,16 +147,6 @@ public class Application extends Controller {
         }
         else
         {
-            /*
-            connectedUser = renderArgs.get("user", User.class);
-
-            if (connectedUser == null)
-            {
-                connectedUser = User.find("byUsername", username).first();
-            }
-            return connectedUser;
-            */
-
             connectedUser = User.find("byUsername", username).first();
             return connectedUser;
         }
@@ -412,9 +415,10 @@ public class Application extends Controller {
         return dateRes;
     }
 
+
     /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     initUser
-    Busca un usuari a partir del nom
+    Binicia la sessió amb el username indicat com a paràmetre.
      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
     public static boolean initUser (String username)
@@ -432,17 +436,18 @@ public class Application extends Controller {
         }
     }
 
+
     /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     Index
-    Inicialitza la pantalla principal o accedeix dintre de la sessió
-    de l'usuari si aquest ja ha entrat anteriorment
+    renderitza l'index si no hem iniciat sessió (pàgina de login)
+    si ja tenim una sessió oberta, redirigeix a la pàgina principal
      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
     public static void index()
     {
-        flash.clear();
         if (connectedUser() != null)
         {
+            flash.clear();
             String userN = connectedUser().userName;
             renderTemplate("Application/LogIn.html", userN);
         }
@@ -452,12 +457,10 @@ public class Application extends Controller {
         }
     }
 
-    // Per executar servei des del navegador
-    // localhost:9000/Application/inicialitzarBaseDades
+
     /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     LogIn
-    Accedeix a la sessió d'un usuari sempre i quan les dades estiguin
-    correctes
+    Aquest mètode gestiona l'acció de LogIn iniciada des del formulari del index.
      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
     public static void LogIn(@Required String username,@Required String password){
@@ -476,6 +479,7 @@ public class Application extends Controller {
         }
         else
         {
+            // Login OK
             if (u.password.equals(password))
             {
                 String userN=u.userName;
@@ -494,10 +498,11 @@ public class Application extends Controller {
         }
     }
 
+
     /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     LogOut
-    Tanca la sessió d'un usuari borrant la informació guardada en
-    la cookie
+    Tanquem la sessió eliminant l'usuari de la scope session i
+    tornem a la pantalla de login.
      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
     public static void Logout ()
@@ -508,7 +513,7 @@ public class Application extends Controller {
 
     /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     SingUpForm
-    T'envia a la vista de creació de registre d'un usuari
+    mètode per renderitzar el formulari de Sign Up
      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
     public static void SignUpForm()
@@ -516,9 +521,12 @@ public class Application extends Controller {
         render();
     }
 
+
     /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     SingUp
-    Registre, si és possible, l'usuari
+    mètode per gestionar l'acció de SignUp.
+    Si els paràmetres introduïts són correctes i l'usuari no existeix
+    a la base de dades, crea un nou usuari.
      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
     public static void SignUp(@Valid User user)
@@ -539,6 +547,7 @@ public class Application extends Controller {
         }
         else
         {
+            // Sign Up OK
             u = User.find("byEmail", user.email).first();
             if (u == null)
             {
@@ -556,9 +565,10 @@ public class Application extends Controller {
         }
     }
 
+
     /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     DeleteUserForm
-    Va a la pantalla per verificar l'usuari abans de borrar-lo
+    Renderitza la pantilla html que permet esborrar un usuari
      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
     public static void DeleteUserForm()
@@ -577,7 +587,7 @@ public class Application extends Controller {
 
     /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     DeleteUser
-    Intenta borrar l'usuari si el nom i la contrassenya són correctes
+    Acció per esborrar un usuari. Requereix autentificació mitjançant la contrassenya.
      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
     public static void DeleteUser(@Required String username, @Required String password)
@@ -604,6 +614,8 @@ public class Application extends Controller {
             }
             else
             {
+                // esborrem totes les subscripcions de l'usuari a altres calendaris
+                // i dels altres usuaris als calendaris propis.
                 LinCalendar cal;
                 for (Subscription subscription : u.subscriptions)
                 {
@@ -623,17 +635,20 @@ public class Application extends Controller {
         }
     }
 
+
     /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     ManageSubscriptionForm
-    T'envia a la vista de administració de subscripcions
+    Mètode per renderitzar el formulari de gestió de subscripcions.
      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
     public static void ManageSubscriptionsForm()
     {
+        // calendaris públics a la base de dades
         List <LinCalendar> publicCalendars = LinCalendar.find("byIspublic", true).fetch();
+
+        // calendaris públics de tercers (descartem els propis)
         List <LinCalendar> publicCalendarsFiltered = new ArrayList<>();
         User user = connectedUser();
-        //List <LinCalendar> calendars = LinCalendar.find("byOwner", session.get("username")).fetch();
         for (LinCalendar cal : publicCalendars)
         {
             if (cal.owner != user)
@@ -642,10 +657,10 @@ public class Application extends Controller {
             }
         }
 
+        // a partir dels calendaris públics de tercers, els separem en calendaris
+        // als quals no estems subscripts i calendaris als quals estem subscrits
         List <LinCalendar> nonSubscribedCalendars = new ArrayList<>();
         List <LinCalendar> subscribedCalendars = new ArrayList<>();
-
-
         for (Subscription sub : user.subscriptions)
         {
             subscribedCalendars.add(sub.calendar);
@@ -659,6 +674,8 @@ public class Application extends Controller {
             }
         }
 
+        // desem les subscripcions i els calendaris sense subscripció als renderArgs
+        // i renderitzem la plantilla ManageSubscriptionsForm.html
         renderArgs.put("subscriptions", user.subscriptions);
         renderArgs.put("nonSubscribedCalendars", nonSubscribedCalendars);
         render();
@@ -666,7 +683,7 @@ public class Application extends Controller {
 
     /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     AddCalendarSubscription
-    Es subscribeix a un calendari
+    Acció per afegir una subscripció segons una id de calendari
      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
     public static void AddCalendarSubscription(long id)
@@ -680,6 +697,7 @@ public class Application extends Controller {
 
         else
         {
+            // si el calendari existeix, creem la subscripció
             User user = connectedUser();
             Subscription subscription = new Subscription(user, calendar, false);
             user.subscriptions.add(subscription);
@@ -689,9 +707,10 @@ public class Application extends Controller {
         }
     }
 
+
     /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     RemoveCalendarSubscription
-    Funció per desubscribir-te d'un calendari
+    acció per eliminar una subscripció de la base de dades.
      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
     public static void RemoveCalendarSubscription(long id)
@@ -705,6 +724,10 @@ public class Application extends Controller {
 
         else
         {
+            // calen aquestes instruccions al Entity Manager del JPA per a forçar
+            // que els canvis efectuats sobre les dades apareguin al renderitzar de nou
+            // la plantilla ManageSubscriptionsForm.html. Això és per assegurar que el model
+            // de persistència reflecteixi els canvis abans de fer la crida a updateTemplateArgs.
             sub.delete();
             JPA.em().flush();
             JPA.em().clear();
@@ -729,9 +752,10 @@ public class Application extends Controller {
         render("Application/LogIn.html",userN);
     }
 
+
     /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     CreateCalendarForm
-    T'envia a la pantalla de creació de calendaris
+    Renderitzem el forumari de creació de calendaris
      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
     public static void CreateCalendarForm()
@@ -740,9 +764,11 @@ public class Application extends Controller {
         render();
     }
 
+
     /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     CreateCalendar
-    Intenta crear un calendari amb les dades especificades
+    Acció de creació de calendari segons les dades introduïdes
+    al CreateCalendarForm.html
      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
     public static void CreateCalendar(String calName, String description, boolean isPublic)
@@ -758,9 +784,20 @@ public class Application extends Controller {
         render("Application/LogIn.html", userN);
     }
 
+
+    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    DeleteCalendarForm
+    mètode per renderitzar el formulari per esborrar calendaris
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+    public static void DeleteCalendarForm()
+    {
+        render();
+    }
+
     /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     DeleteCalendar
-    Borra un calendari
+    Acció per esborrar un calendari
      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
     public static void DeleteCalendar(long id, boolean check)
@@ -794,20 +831,10 @@ public class Application extends Controller {
         render("Application/LogIn.html");
     }
 
-    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    DeleteCalendarForm
-    T'envia a la vista d'eliminació de calendaris
-     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-    public static void DeleteCalendarForm()
-    {
-        render();
-    }
 
     /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     CreateTaskForm
-    T'envia a la vista de creació d'una tasca per especificar la
-    informació de la tasca
+    renderitzem el formulari de creació de tasques
      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
     public static void CreateTaskForm()
@@ -817,13 +844,15 @@ public class Application extends Controller {
 
     /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     CreateTask
-    Intenta crear una tasca a través de la informació especificada
+    acció per crear una tasca segons les dades introduïdes al
+    formulari de creació de tasques
      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
     public static void CreateTask(@Required @MaxSize(18) String name, @MaxSize(5000) String description, @Required String date, @Required String calName)
     {
         User user = User.find("byUsername", session.get("username")).first();
 
+        // convertim la data al tipus de variable del model de JPA.
         Date taskDate = dateFormatConverter(date);
 
         if(validation.hasErrors())
@@ -833,6 +862,10 @@ public class Application extends Controller {
             render("Application/CreateTaskForm.html");
         }
 
+        // creem la tasca en el calendari corresponent.
+        // Hem de buscar el calendari dins els calendaris propis (owned)
+        // i dins de les subscripcions, per si estem afegint una tasca a un
+        // calendari amb subscripció i permisos d'edició
         LinCalendar calendar;
         for (LinCalendar cal : user.ownedCalendars) {
             if (cal.calName.equals(calName)) {
@@ -869,10 +902,10 @@ public class Application extends Controller {
         }
     }
 
+
     /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     CreateEventForm
-    T'envia a la vista de creació d'un esdeveniment per especificar
-    la seva informació
+    formulari de creació d'esdeveniments
      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
     public static void CreateEventForm()
@@ -882,7 +915,8 @@ public class Application extends Controller {
 
     /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     CreateEvent
-    Intenta crear un esdeveniment amb les dades especificades
+    acció per crear un esdeveniment segons les dades introduïdes
+    al formulari de creació d'esdeveniments
      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
     public static void CreateEvent(@Required @MaxSize(18) String name, @MaxSize(5000) String description,
@@ -899,12 +933,13 @@ public class Application extends Controller {
             render("Application/CreateEventForm.html");
         }
 
-        //Obtenim les dates en el format correcte i evitem errors de dates
+        // Obtenim les dates en el format correcte i evitem errors de dates
         try {
             Date startDateFormat = dateFormatConverter(startDate);
             Date endDateFormat = dateFormatConverter(endDate);
-            if (startDateFormat.getTime() >= endDateFormat.getTime()) //Evita dates on la data d'inici i final estàn canviats o són iguals
-            {
+
+            // Evita dates on la data d'inici i final estan invertides o són iguals
+            if (startDateFormat.getTime() >= endDateFormat.getTime())       {
                 flash.error("No pots posar la data inicial després de la data final o que l'esdeveniment comenci i acabi al mateix instant. Aquesta aplicació pel moment no contempla viatges al passat");
                 params.flash();
                 //Validation.keep();
@@ -919,6 +954,7 @@ public class Application extends Controller {
 
             }
         }
+        // si falla la conversió de dates, gestionem l'excepció
         catch(Exception e)
         {
             flash.error("Els formats de les dates són errònies");
@@ -927,6 +963,8 @@ public class Application extends Controller {
             render("Application/CreateEventForm.html");
         }
 
+        // afegim l'esdevemient al calendari que toqui, ja sigui un calendari propi o
+        // un calendari amb subscripció i permisos d'edició
         LinCalendar calendar;
         for (LinCalendar cal : user.ownedCalendars) {
             if (cal.calName.equals(calName)) {
@@ -966,73 +1004,31 @@ public class Application extends Controller {
     }
 
     /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    DeleteEvent
-    Intenta borrar un esdeveniment
-     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-    public static void DeleteEvent(long id)
-    {
-        CalEvent event = CalEvent.find("byId", id).first();
-
-        if(event == null)
-        {
-            session.remove("editableEventId");
-            flash.error("Error: No hem trobat l'esdeveniment!");
-            Logout();
-        }
-        event.delete();
-        JPA.em().flush();
-        JPA.em().clear();
-
-        updateTemplateArgs();
-        setCalendarItems();
-        flash.put("messageOK", "Esdeveniment esborrat.");
-        render("Application/LogIn.html");
-    }
-
-    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    DeleteTask
-    Intenta borrar una tasca
-     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-
-    public static void DeleteTask(long id)
-    {
-        CalTask task = CalTask.findById(id);
-        if(task == null)
-        {
-            session.remove("editableTaskId");
-            flash.error("Error: No hem trobat la tasca!!");
-            Logout();
-        }
-        task.delete();
-        JPA.em().flush();
-        JPA.em().clear();
-        updateTemplateArgs();
-        setCalendarItems();
-        flash.put("messageOK", "Tasca esborrada.");
-        render("Application/LogIn.html");
-    }
-
-    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     EditEventForm
-    T'envia a la pantalla d'edició d'un esdeveniment
+    renderitza el forumari per editar esdeveniments
      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
     public static void EditEventForm(long id)
     {
         CalEvent event = CalEvent.findById(id);
+
+        // afegim a la sessió html la id de l'esdeveniment que volem editar.
+        // aquest paràmetre és necessari per a la funció EditEvent()
         session.put("editableEventId", event.id);
         render("Application/EditEventForm.html", event);
     }
 
+
     /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     EditTaskForm
-    T'envia a la pantalla d'edició d'una tasca
+    renderitza el forumari per editar tasques
      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
     public static void EditTaskForm(long id)
     {
         CalTask task = CalTask.findById(id);
+
+        // afegim a la sessió html la id de la tasca que volem editar.
         session.put("editableTaskId", task.id);
         render("Application/EditTaskForm.html", task);
     }
@@ -1040,7 +1036,7 @@ public class Application extends Controller {
 
     /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     EditEvent
-    Intenta editar un esdeveniment ja creat
+    acció per editar un esdeveniment
      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
     public static void EditEvent(@Required @MaxSize(18) String name,
@@ -1050,9 +1046,13 @@ public class Application extends Controller {
                                  @Required String addressPhysical,
                                  @Required String addressOnline)
     {
+        // utilitzem la id de l'esdeveniment editable introduïda a la sessió html.
+        // aquest paràmetre s'afegeix al renderitzar el formumari d'edició d'esdeveniments
         long id = Long.parseLong(session.get("editableEventId"));
         CalEvent event = CalEvent.findById(id);
 
+        // si no trobem l'esdeveniment per la ID, tanquem la sessió
+        // ja que s'ha produït un error greu.
         if(event == null)
         {
             session.remove("editableEventId");
@@ -1064,33 +1064,40 @@ public class Application extends Controller {
             params.flash();
             render("Application/EditEventForm.html", event);
         }
-       event.addressPhysical = addressPhysical;
-       event.addressOnline = addressOnline;
-       event.description = description;
-       event.name = name;
-       event.startDate = dateFormatConverter(startDate);
-       event.endDate = dateFormatConverter(endDate);
-       event.save();
 
-       session.remove("editableEventId");
-       flash.put("messageOK", "Esdeveniment modificat!");
-       updateTemplateArgs();
-       setCalendarItems();
-       render("Application/LogIn.html");
+        // actualitzem els camps de l'esdeveniment, inclòs el seu nom.
+        // això és possible ja que utilitzem la id de l'objecte per identificar-lo
+        // i no el nom de l'esdeveniment.
+        event.addressPhysical = addressPhysical;
+        event.addressOnline = addressOnline;
+        event.description = description;
+        event.name = name;
+        event.startDate = dateFormatConverter(startDate);
+        event.endDate = dateFormatConverter(endDate);
+        event.save();
+
+        // un cop hem realitzat l'edició, esborrem el camp editableEventId de la sessió html.
+        session.remove("editableEventId");
+
+        // actualitzem els renderArgs i retornem a la pantalla principal amb un missatge flash que indica
+        // la correcta edició de l'esdeveniment.
+        flash.put("messageOK", "Esdeveniment modificat!");
+        updateTemplateArgs();
+        setCalendarItems();
+        render("Application/LogIn.html");
     }
-
 
 
     /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     EditTask
-    Intenta editar una tasca ja creada
+    Acció per editar una tasca. Segueix el mateix patró que el
+    mètode EditEvent
      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
     public static void EditTask(@Required @MaxSize(18) String name,
                                 @MaxSize(5000) String description,
                                 @Required String date)
     {
-        //renderText(dateFormatConverter(date));
         long id = Long.parseLong(session.get("editableTaskId"));
         CalTask task = CalTask.findById(id);
 
@@ -1119,9 +1126,11 @@ public class Application extends Controller {
         render("Application/LogIn.html");
     }
 
+
     /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     MarkTaskDone
-    Marca una tasca com a completada
+    Acció per marcar la tasca com a completada
+    La tasca es passa per ID
      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
     public static void markTaskDone(long id) {
@@ -1142,9 +1151,11 @@ public class Application extends Controller {
         }
     }
 
+
     /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     MarkTaskPending
-    Marca una tasca com a pendent
+    Acció per marcar una tasca com a pendent
+    La tasca es passa per ID
      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
     public static void markTaskPending(long id) {
@@ -1165,9 +1176,62 @@ public class Application extends Controller {
         }
     }
 
+
+    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    DeleteEvent
+    Acció per esborrar un esdeveniment (segons el seu id)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+    public static void DeleteEvent(long id)
+    {
+        CalEvent event = CalEvent.find("byId", id).first();
+
+        if(event == null)
+        {
+            session.remove("editableEventId");
+            flash.error("Error: No hem trobat l'esdeveniment!");
+            Logout();
+        }
+        event.delete();
+        JPA.em().flush();
+        JPA.em().clear();
+
+        updateTemplateArgs();
+        setCalendarItems();
+        flash.put("messageOK", "Esdeveniment esborrat.");
+        render("Application/LogIn.html");
+    }
+
+
+    /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    DeleteEvent
+    Acció per esborrar una tasca (segons el seu id)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+    public static void DeleteTask(long id)
+    {
+        CalTask task = CalTask.findById(id);
+        if(task == null)
+        {
+            session.remove("editableTaskId");
+            flash.error("Error: No hem trobat la tasca!!");
+            Logout();
+        }
+        task.delete();
+        JPA.em().flush();
+        JPA.em().clear();
+        updateTemplateArgs();
+        setCalendarItems();
+        flash.put("messageOK", "Tasca esborrada.");
+        render("Application/LogIn.html");
+    }
+
+
     /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     AdminCalendarForm
-    T'envia a la pantalla d'administració de calendaris
+    renderitza la plantilla d'administració de calendaris.
+    Des d'aquest formulari podem canviar qualsevol paràmetre d'un
+    calendari, fer el calendari públic o privat, i gestionar els
+    permisos d'edició dels subscriptors
      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
     public static void AdminCalendarForm()
@@ -1175,9 +1239,11 @@ public class Application extends Controller {
         render();
     }
 
+
     /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     EditCalendar
-    Intenta editar un calendari
+    acció per editar un calendari. Es crida des de la plantilla
+    AdminCalendarForm.html
      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
     public static void EditCalendar(@Required long id,
@@ -1195,13 +1261,14 @@ public class Application extends Controller {
         if(Validation.hasErrors())
         {
             params.flash();
-            //Validation.keep();
             render("Application/AdminCalendarForm.html");
         }
 
+        // actualitzem el nom i la descripció del calendari
         cal.calName = calName;
         cal.description = description;
 
+        // actualitzem si el calendari és públic o privat
         if (goPublic)
         {
             cal.isPublic = true;
@@ -1218,9 +1285,13 @@ public class Application extends Controller {
         AdminCalendarForm();
     }
 
+
     /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     MakeEditor
-    Permet a un altre usuari editar el calendari
+    acció per atorgar permisos d'edició a un subscriptor.
+    es crida des de la plantilla AdminCalendarForm.html
+    la id que es passa com a paràmetre és la de la subscripció
+    que es vol modificar.
      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
     public static void MakeEditor(long id)
@@ -1233,7 +1304,7 @@ public class Application extends Controller {
 
     /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     RevokeEditor
-    Revoca el permís d'edició a un usuari
+    acció per revocar permisos d'edició a un subscriptor.
      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
     public static void RevokeEditor(long id)
@@ -1245,6 +1316,7 @@ public class Application extends Controller {
     }
 
     /*
+    // Mètode per inicialitzar la base de dades. Actualment fem anar el Bootstrap i ja no és necessari.
     public static void inicialitzarBaseDades(){
 
         // Accio Sign-Up

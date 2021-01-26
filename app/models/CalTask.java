@@ -10,6 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Date;
 
+// entitat que representa una tasca.
+// A banda dels camps d'informació, té una relació ManyToOne amb el calendari
+// del qual forma part.
 @Entity
 public class CalTask extends Model{
 
@@ -41,11 +44,9 @@ public class CalTask extends Model{
     @Expose(serialize = true)
     public boolean completed;
 
-    //Atributs
+    // Relacions
     @ManyToOne
     public LinCalendar calendar;
-
-    //TODO: Afegir atributs i constructor
 
     //Nom dels elements del CRUD
     public String toString()
