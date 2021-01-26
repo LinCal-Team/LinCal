@@ -14,6 +14,9 @@ import javax.persistence.CascadeType;
 import java.util.ArrayList;
 import java.util.List;
 
+// entitat que implementa un usuari de l'aplicació.
+// l'usuari té una llista (relació) de calendaris creats (ownedCalendars)
+// i una llista (relació) de subscripcions amb altres calendaris.
 @Entity
 public class User extends Model {
 
